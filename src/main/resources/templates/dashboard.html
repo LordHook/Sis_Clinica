@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: base(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section>
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-800">Panel de Control</h2>
+            <p class="text-sm text-slate-500 mt-1">Resumen general de las operaciones de hoy</p>
+        </div>
+
+        <div class="grid grid-cols-1 mb-6">
+            <div class="wire-box h-36 flex flex-col items-center justify-center p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
+                <div class="text-xs font-semibold uppercase text-blue-100">Total de Citas Agendadas Hoy</div>
+                <div id="total-citas" class="text-6xl font-black">--</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="wire-box p-6 bg-white">
+                <h3 class="font-bold text-sm uppercase mb-4">📈 Citas por Especialidad</h3>
+                <div class="bar-chart-container" id="chart-container"></div>
+            </div>
+
+            <div class="wire-box p-6 bg-white">
+                <h3 class="font-bold text-sm uppercase mb-4">👨‍⚕️ Top Médicos (Citas)</h3>
+                <table class="w-full" id="tabla-top-medicos"></table>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                cargarDashboard();
+            });
+        </script>
+    </section>
+</body>
+</html>

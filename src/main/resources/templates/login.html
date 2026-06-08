@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Clínica UTP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="flex h-screen w-screen items-center justify-center bg-slate-100 relative">
+    <div class="wire-box p-10 max-w-md w-full shadow-2xl border-0">
+        <div class="text-center mb-8 border-b border-slate-200 pb-6">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl mx-auto mb-4 flex items-center justify-center font-bold text-2xl shadow-sm">🏥</div>
+            <h1 class="text-2xl font-black tracking-wide text-slate-800">CLÍNICA UTP</h1>
+            <p class="text-sm font-medium text-slate-500 mt-1">Sistema de Gestión Integral</p>
+        </div>
+<form id="login-form" class="space-y-5">
+    <div>
+        <label class="block font-semibold mb-1 text-sm text-slate-700">Usuario</label>
+        <input type="text" id="username" placeholder="ejemplo@clinicautp.com" class="wire-input" required />
+    </div>
+    <div>
+        <label class="block font-semibold mb-1 text-sm text-slate-700">Contraseña</label>
+        <input type="password" id="password" placeholder="••••••••" class="wire-input" required />
+    </div>
+    <button type="submit" class="wire-btn-dark w-full py-3.5 text-sm mt-4 shadow-lg">
+        Iniciar Sesión
+    </button>
+</form>
+    </div>
+    <script src="/js/app.js"></script>
+</body>
+</html>

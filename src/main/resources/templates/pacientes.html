@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: base(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section>
+        <div class="flex justify-between items-end mb-6 border-b border-slate-200 pb-4">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">Directorio de Pacientes</h2>
+                <p class="text-sm text-slate-500 mt-1">Conectado a la BD de Railway vía Spring Boot</p>
+            </div>
+            <button onclick="toggleModal('modal-paciente', true)" class="wire-btn-dark px-5 py-2.5">+ Registrar Paciente</button>
+        </div>
+
+        <div class="wire-box bg-white overflow-hidden border-0 shadow-sm">
+            <table class="w-full text-left">
+                <thead><tr><th>Historia</th><th>DNI</th><th>Nombres y Apellidos</th><th>Estado</th><th class="text-right">Acciones</th></tr></thead>
+                <tbody id="tabla-pacientes-body"></tbody>
+            </table>
+        </div>
+
+        <script>
+            window.onload = function() { cargarPacientesBD(); };
+        </script>
+    </section>
+</body>
+</html>
