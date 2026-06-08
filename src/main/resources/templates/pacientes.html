@@ -1,25 +1,122 @@
 <!DOCTYPE html>
 <html th:replace="~{layout :: base(~{::section})}" xmlns:th="http://www.thymeleaf.org">
 <body>
-    <section>
-        <div class="flex justify-between items-end mb-6 border-b border-slate-200 pb-4">
+    <section class="p-8 h-full flex flex-col">
+        <div class="flex justify-between items-center mb-6">
             <div>
                 <h2 class="text-2xl font-bold text-slate-800">Directorio de Pacientes</h2>
-                <p class="text-sm text-slate-500 mt-1">Conectado a la BD de Railway vía Spring Boot</p>
+                <p class="text-sm text-slate-500 mt-1">Gestión de historias clínicas</p>
             </div>
-            <button onclick="toggleModal('modal-paciente', true)" class="wire-btn-dark px-5 py-2.5">+ Registrar Paciente</button>
+            <button type="button" onclick="toggleModalPaciente(true)" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md transition-colors text-sm tracking-wide">
+                + REGISTRAR PACIENTE
+            </button>
         </div>
 
-        <div class="wire-box bg-white overflow-hidden border-0 shadow-sm">
-            <table class="w-full text-left">
-                <thead><tr><th>Historia</th><th>DNI</th><th>Nombres y Apellidos</th><th>Estado</th><th class="text-right">Acciones</th></tr></thead>
-                <tbody id="tabla-pacientes-body"></tbody>
+        <div class="mb-6 bg-white p-2 rounded-xl shadow-sm border border-slate-100 flex">
+            <div class="relative w-full max-w-2xl">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">🔍</span>
+                <input type="text" placeholder="Buscar por DNI o Historia Clínica..." class="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-blue-500 focus:bg-white transition-colors">
+            </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex-1 overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                    <tr class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
+                        <th class="p-4">Historia Nro.</th>
+                        <th class="p-4">DNI</th>
+                        <th class="p-4">Nombres y Apellidos</th>
+                        <th class="p-4">Estado</th>
+                        <th class="p-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-pacientes-body" class="text-sm divide-y divide-slate-100">
+                    </tbody>
             </table>
         </div>
 
-        <script>
-            window.onload = function() { cargarPacientesBD(); };
-        </script>
+        <div id="modal-nuevo-paciente" class="hidden-view fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col">
+                
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-indigo-50 p-2 rounded-lg text-indigo-600 text-lg">👥</div>
+                        <h3 class="text-xl font-bold text-slate-800">Registrar Nuevo Paciente</h3>
+                    </div>
+                    <button type="button" onclick="toggleModalPaciente(false)" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+                </div>
+
+                <div class="p-6 space-y-5 bg-slate-50/30">
+                    <div class="grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">DNI / Documento</label>
+                            <input type="text" id="pac-dni" placeholder="Nro. de Documento" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Nro. Historia Clínica</label>
+                            <input type="text" disabled placeholder="Autogenerado al guardar" class="w-full bg-slate-100 border border-slate-200 text-slate-500 italic rounded-lg py-2.5 px-3 text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Nombres Completos</label>
+                            <input type="text" id="pac-nombres" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Apellidos Completos</label>
+                            <input type="text" id="pac-apellidos" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">F. Nacimiento</label>
+                            <input type="date" id="pac-fecha" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 text-slate-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Sexo biológico</label>
+                            <select id="pac-sexo" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 text-slate-700">
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                                <option value="OTRO">Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Teléfono Móvil</label>
+                            <input type="text" id="pac-telefono" placeholder="Ej. 987..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Dirección Domiciliaria</label>
+                            <input type="text" id="pac-direccion" placeholder="Av. Calle..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Correo (Opcional)</label>
+                            <input type="email" id="pac-correo" placeholder="correo@ejemplo.com" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="bg-red-50/50 border border-red-100 rounded-xl p-4">
+                        <label class="flex items-center text-sm font-bold text-red-600 mb-2">
+                            <span class="mr-2">⚠️</span> Registro de Alergias (Vital)
+                        </label>
+                        <textarea id="pac-alergias" rows="2" placeholder="Especifique alergias conocidas, si las tiene..." class="w-full border border-red-200 rounded-lg py-2 px-3 text-sm focus:border-red-400 focus:ring-1 focus:ring-red-400 bg-white placeholder-red-300 text-red-700"></textarea>
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 border-t border-slate-100 flex justify-end space-x-3 bg-white">
+                    <button type="button" onclick="toggleModalPaciente(false)" class="px-6 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-bold text-xs tracking-wide hover:bg-slate-50 transition-colors">
+                        CANCELAR
+                    </button>
+                    <button type="button" onclick="guardarPaciente()" class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs tracking-wide shadow-md transition-colors">
+                        GUARDAR EXPEDIENTE
+                    </button>
+                </div>
+            </div>
+        </div>
     </section>
 </body>
 </html>

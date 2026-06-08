@@ -2,23 +2,22 @@ package com.utp.clinica;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-// @Entity indica que esta clase es una tabla en la BD
-// @Table especifica el nombre exacto de la tabla en MySQL
 @Entity
 @Table(name = "pacientes")
-@Data
+@Data // Esta etiqueta mágica de Lombok crea los get y set automáticamente
 public class Paciente {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_paciente;
+    private Long idPaciente;
 
-    @Column(nullable = false, unique = true)
-    private String numero_historia_clinica;
+    @Column(unique = true)
+    private String numeroHistoriaClinica;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String dni;
 
     @Column(nullable = false)
@@ -27,14 +26,28 @@ public class Paciente {
     @Column(nullable = false)
     private String apellidos;
 
-    private Date fecha_nacimiento;
-    private String sexo;
+    private LocalDate fechaNacimiento;
+    
+    private String sexo; // 'M', 'F', 'OTRO'
     private String telefono;
     private String direccion;
     private String correo;
     
     @Column(columnDefinition = "TEXT")
     private String alergias;
+    
+    private String estado = "ACTIVO";
+    
+    private LocalDateTime fechaRegistro;
 
-    private String estado;
+    // INTEGRACIÓN DE MÉTODOS MANUALES
+public String getNumeroHistoriaClinica() { return numeroHistoriaClinica; }
+public void setNumeroHistoriaClinica(String numeroHistoriaClinica) { this.numeroHistoriaClinica = numeroHistoriaClinica; }
+public void setEstado(String estado) { this.estado = estado; }
+
+    // Esto le dice a Spring Boot que asigne la fecha exacta justo antes de guardar en la BD
+    @PrePersist
+    protected void onCreate() {
+        fechaRegistro = LocalDateTime.now();
+    }
 }

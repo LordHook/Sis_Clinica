@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: base(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section class="p-8 h-full">
+        <h2 class="text-2xl font-bold text-slate-800">Despacho Farmacéutico</h2>
+        <p class="text-sm text-slate-500 mb-6">Gestión y entrega de recetas electrónicas</p>
+
+        <div class="bg-white border rounded-xl shadow-sm p-6">
+            <div class="flex gap-4 mb-6">
+    <input type="text" id="input-busqueda" placeholder="Buscar por DNI o Nombre..." 
+           onkeyup="filtrarFarmacia()" class="wire-input w-64">
+    
+    <select id="select-estado" onchange="filtrarFarmacia()" class="wire-input w-48">
+        <option value="">TODOS LOS ESTADOS</option>
+        <option value="EMITIDA" selected>PENDIENTES</option>
+        <option value="DESPACHADA">DESPACHADAS</option>
+    </select>
+</div>
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50 border-b">
+                    <tr class="text-[11px] uppercase text-slate-500 font-bold">
+                        <th class="p-4">Fecha y Hora</th>
+                        <th class="p-4">Paciente</th>
+                        <th class="p-4">Médico Emisor</th>
+                        <th class="p-4">Estado</th>
+                        <th class="p-4 text-right">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-farmacia-body">
+                    </tbody>
+            </table>
+        </div>
+    </section>
+</body>
+</html>

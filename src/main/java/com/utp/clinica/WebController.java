@@ -29,4 +29,9 @@ public String citas(Model model) {
     model.addAttribute("paginaActiva", "citas");
     return "citas"; // Asegúrate de tener citas.html en templates/
 }
+@GetMapping("/farmacia")
+public String farmacia(Model model) {
+    model.addAttribute("active", "farmacia");
+    return "farmacia"; // Nombre del archivo HTML
+}
 }

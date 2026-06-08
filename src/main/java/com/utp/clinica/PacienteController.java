@@ -3,31 +3,32 @@ package com.utp.clinica;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/pacientes")
 public class PacienteController {
 
     @Autowired
-    private PacienteRepository pacienteRepository;
+    private PacienteRepository pacienteRepo;
 
-    // Obtener todos los pacientes
     @GetMapping
     public List<Paciente> listarPacientes() {
-        return pacienteRepository.findAll();
+        return pacienteRepo.findAll();
     }
 
-    // Guardar un nuevo paciente
-    @PostMapping
-    public ResponseEntity<Paciente> guardarPaciente(@RequestBody Paciente paciente) {
-        // Generar un número de historia clínica automático
-        paciente.setNumero_historia_clinica("HC-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase());
+    @PostMapping("/registrar")
+    public ResponseEntity<?> registrarPaciente(@RequestBody Paciente paciente) {
+        // Asegurar que el estado inicial sea ACTIVO
         paciente.setEstado("ACTIVO");
         
-        Paciente nuevoPaciente = pacienteRepository.save(paciente);
-        return ResponseEntity.ok(nuevoPaciente);
+        // Autogenerar Historia Clínica (Ej: HC-000005)
+        if (paciente.getNumeroHistoriaClinica() == null || paciente.getNumeroHistoriaClinica().isEmpty()) {
+            long total = pacienteRepo.count() + 1;
+            paciente.setNumeroHistoriaClinica(String.format("HC-%06d", total));
+        }
+
+        Paciente guardado = pacienteRepo.save(paciente);
+        return ResponseEntity.ok(guardado);
     }
 }

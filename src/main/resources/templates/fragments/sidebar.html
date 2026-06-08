@@ -17,14 +17,23 @@
        th:classappend="${paginaActiva == 'dashboard'} ? 'nav-active' : 'nav-inactive'">
        📊 Dashboard
     </a>
+        <a th:href="@{/citas}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+       th:classappend="${paginaActiva == 'citas'} ? 'nav-active' : 'nav-inactive'">
+       📅 Módulo Citas
+    </a>
     <a th:href="@{/pacientes}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
        th:classappend="${paginaActiva == 'pacientes'} ? 'nav-active' : 'nav-inactive'">
        👥 Módulo Pacientes
     </a>
-    <a th:href="@{/citas}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
-       th:classappend="${paginaActiva == 'citas'} ? 'nav-active' : 'nav-inactive'">
-       📅 Módulo Citas
+    <div class="space-y-1">
+    <a href="/farmacia" 
+       th:classappend="${active == 'farmacia'} ? 'bg-blue-50 text-blue-700' : 'text-slate-600'"
+       class="flex items-center px-4 py-3 rounded-lg hover:bg-blue-50 transition-colors">
+        <span class="mr-3">💊</span>
+        <span class="font-medium text-sm">Módulo Farmacia</span>
     </a>
+</div>
+
 </nav>
 
         <a th:href="@{/login}" class="mt-6 py-3 w-full text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-center font-semibold text-sm transition">
