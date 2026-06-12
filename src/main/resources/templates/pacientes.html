@@ -1,122 +1,205 @@
 <!DOCTYPE html>
 <html th:replace="~{layout :: base(~{::section})}" xmlns:th="http://www.thymeleaf.org">
 <body>
-    <section class="p-8 h-full flex flex-col">
+    <section class="p-0 h-full flex flex-col">
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h2 class="text-2xl font-bold text-slate-800">Directorio de Pacientes</h2>
-                <p class="text-sm text-slate-500 mt-1">Gestión de historias clínicas</p>
+                <p class="text-sm text-slate-500 mt-1">Gestión de historias clínicas y expedientes</p>
             </div>
-            <button type="button" onclick="toggleModalPaciente(true)" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow-md transition-colors text-sm tracking-wide">
+            <button onclick="toggleModalPaciente(true)" class="wire-btn-dark px-5 py-2.5 cursor-pointer">
                 + REGISTRAR PACIENTE
             </button>
         </div>
 
-        <div class="mb-6 bg-white p-2 rounded-xl shadow-sm border border-slate-100 flex">
-            <div class="relative w-full max-w-2xl">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">🔍</span>
-                <input type="text" placeholder="Buscar por DNI o Historia Clínica..." class="w-full bg-slate-50 border border-slate-200 rounded-lg py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-blue-500 focus:bg-white transition-colors">
+        <!-- Filters Form -->
+        <form th:action="@{/pacientes}" method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="relative col-span-2">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">🔍</span>
+                <input type="text" name="busqueda" placeholder="Buscar por DNI, Nro. Historia o Apellidos..." class="w-full border border-slate-300 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
             </div>
-        </div>
+            <div>
+                <button type="submit" class="wire-btn w-full py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50 font-bold transition">
+                    Buscar
+                </button>
+            </div>
+            <div>
+                <a th:href="@{/pacientes}" class="wire-btn w-full py-2 bg-slate-200 border-0 rounded-lg text-sm text-slate-700 hover:bg-slate-300 font-bold transition flex items-center justify-center">
+                    Limpiar
+                </a>
+            </div>
+        </form>
 
-        <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex-1 overflow-hidden">
+        <!-- Patients Directory Table -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex-1 overflow-auto">
             <table class="w-full text-left border-collapse">
-                <thead class="bg-slate-50 border-b border-slate-200">
+                <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
                     <tr class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
                         <th class="p-4">Historia Nro.</th>
                         <th class="p-4">DNI</th>
                         <th class="p-4">Nombres y Apellidos</th>
+                        <th class="p-4">Contacto / Correo</th>
                         <th class="p-4">Estado</th>
                         <th class="p-4 text-right">Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="tabla-pacientes-body" class="text-sm divide-y divide-slate-100">
-                    </tbody>
+                <tbody class="text-sm divide-y divide-slate-100">
+                    <tr th:each="paciente : ${pacientes}" class="hover:bg-slate-50/50 transition-colors">
+                        <td class="p-4 font-mono font-medium text-blue-600" th:text="${paciente.numeroHistoriaClinica}">HC-000001</td>
+                        <td class="p-4 text-slate-700" th:text="${paciente.dni}">74839201</td>
+                        <td class="p-4 font-semibold text-slate-800" th:text="${paciente.apellidos + ', ' + paciente.nombres}">Roberto Díaz Suárez</td>
+                        <td class="p-4">
+                            <div class="text-slate-800 font-medium" th:text="${paciente.telefono}">987654</div>
+                            <div class="text-xs text-slate-400" th:text="${paciente.correo}">correo@correo.com</div>
+                        </td>
+                        <td class="p-4">
+                            <span class="badge" 
+                                  th:classappend="${paciente.estado.name() == 'ACTIVO'} ? 'badge-green' : (${paciente.estado.name() == 'INACTIVO'} ? 'badge-yellow' : 'badge-red')"
+                                  th:text="${paciente.estado.name()}">ACTIVO</span>
+                        </td>
+                        <td class="p-4 text-right space-x-2">
+                            <!-- Button triggers editing by copying properties into form -->
+                            <button type="button" 
+                                    th:onclick="editPaciente([[${paciente}]])" 
+                                    class="wire-btn px-3 py-1.5 text-[10px] cursor-pointer">
+                                Editar
+                            </button>
+                            <a th:href="@{/ficha-paciente/{id}(id=${paciente.idPaciente})}" 
+                               class="wire-btn-dark px-3 py-1.5 text-[10px] bg-slate-800 border-slate-800 text-white font-semibold rounded hover:bg-slate-900 transition flex-inline justify-center">
+                               Abrir Historia
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${pacientes == null || pacientes.isEmpty()}">
+                        <td colspan="6" class="text-center text-slate-400 italic py-8 bg-white">No se encontraron pacientes registrados</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
 
-        <div id="modal-nuevo-paciente" class="hidden-view fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col">
-                
-                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                    <div class="flex items-center space-x-3">
-                        <div class="bg-indigo-50 p-2 rounded-lg text-indigo-600 text-lg">👥</div>
-                        <h3 class="text-xl font-bold text-slate-800">Registrar Nuevo Paciente</h3>
+        <!-- Patient Registration Modal -->
+        <div id="modal-paciente" class="hidden-view fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
+            <div class="wire-box w-full max-w-2xl flex flex-col border-0 shadow-2xl overflow-hidden rounded-2xl bg-white">
+                <form th:action="@{/pacientes/guardar}" method="post">
+                    <input type="hidden" name="idPaciente" id="edit-id-paciente">
+                    
+                    <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
+                        <h3 class="font-bold text-lg text-slate-800 flex items-center" id="modal-title">
+                            <span class="bg-emerald-100 text-emerald-600 p-1.5 rounded-lg mr-2 text-sm">👥</span> Registrar Nuevo Paciente
+                        </h3>
+                        <button type="button" onclick="toggleModalPaciente(false)" class="text-slate-400 hover:text-slate-700 text-xl leading-none border-0 bg-transparent cursor-pointer">&times;</button>
                     </div>
-                    <button type="button" onclick="toggleModalPaciente(false)" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
-                </div>
-
-                <div class="p-6 space-y-5 bg-slate-50/30">
-                    <div class="grid grid-cols-2 gap-5">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">DNI / Documento</label>
-                            <input type="text" id="pac-dni" placeholder="Nro. de Documento" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    
+                    <div class="p-6 space-y-5 bg-slate-50 overflow-y-auto max-h-[70vh]">
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">DNI / Documento</label>
+                                <input type="text" name="dni" id="form-dni" class="wire-input" placeholder="Nro. de Documento (8 dígitos)" required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nro. Historia Clínica</label>
+                                <input type="text" disabled id="form-hc" value="Autogenerado al guardar" class="wire-input bg-slate-100 text-slate-400 text-center font-medium italic" />
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Nro. Historia Clínica</label>
-                            <input type="text" disabled placeholder="Autogenerado al guardar" class="w-full bg-slate-100 border border-slate-200 text-slate-500 italic rounded-lg py-2.5 px-3 text-sm">
+                        
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nombres Completos</label>
+                                <input type="text" name="nombres" id="form-nombres" class="wire-input" required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Apellidos Completos</label>
+                                <input type="text" name="apellidos" id="form-apellidos" class="wire-input" required />
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-5">
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">F. Nacimiento</label>
+                                <input type="date" name="fechaNacimiento" id="form-nacimiento" class="wire-input text-slate-600" required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Sexo biológico</label>
+                                <select name="sexo" id="form-sexo" class="wire-input text-slate-600">
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                    <option value="OTRO">Otro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Teléfono Móvil</label>
+                                <input type="text" name="telefono" id="form-telefono" class="wire-input" placeholder="Ej. 987654321" required />
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Dirección Domiciliaria</label>
+                                <input type="text" name="direccion" id="form-direccion" class="wire-input" placeholder="Av. Calle..." required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Correo (Opcional)</label>
+                                <input type="email" name="correo" id="form-correo" class="wire-input" placeholder="correo@ejemplo.com" />
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-xl border border-red-100 mt-2">
+                            <label class="block font-bold text-sm mb-1.5 text-red-600 flex items-center">⚠️ Registro de Alergias (Vital)</label>
+                            <textarea name="alergias" id="form-alergias" rows="2" class="wire-input border-red-200 focus:border-red-400 focus:ring-red-100" placeholder="Especifique alergias conocidas (ej. Penicilina), si las tiene..."></textarea>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-5">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Nombres Completos</label>
-                            <input type="text" id="pac-nombres" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Apellidos Completos</label>
-                            <input type="text" id="pac-apellidos" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                        </div>
+                    
+                    <div class="p-5 border-t border-slate-100 flex justify-end space-x-3 bg-white">
+                        <button type="button" onclick="toggleModalPaciente(false)" class="wire-btn px-5 py-2.5 cursor-pointer">Cancelar</button>
+                        <button type="submit" class="wire-btn-dark px-6 py-2.5 shadow-md text-[13px] cursor-pointer">Guardar Expediente</button>
                     </div>
-
-                    <div class="grid grid-cols-3 gap-5">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">F. Nacimiento</label>
-                            <input type="date" id="pac-fecha" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 text-slate-600">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Sexo biológico</label>
-                            <select id="pac-sexo" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 text-slate-700">
-                                <option value="M">Masculino</option>
-                                <option value="F">Femenino</option>
-                                <option value="OTRO">Otro</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Teléfono Móvil</label>
-                            <input type="text" id="pac-telefono" placeholder="Ej. 987..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-5">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Dirección Domiciliaria</label>
-                            <input type="text" id="pac-direccion" placeholder="Av. Calle..." class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1.5">Correo (Opcional)</label>
-                            <input type="email" id="pac-correo" placeholder="correo@ejemplo.com" class="w-full border border-slate-300 rounded-lg py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                        </div>
-                    </div>
-
-                    <div class="bg-red-50/50 border border-red-100 rounded-xl p-4">
-                        <label class="flex items-center text-sm font-bold text-red-600 mb-2">
-                            <span class="mr-2">⚠️</span> Registro de Alergias (Vital)
-                        </label>
-                        <textarea id="pac-alergias" rows="2" placeholder="Especifique alergias conocidas, si las tiene..." class="w-full border border-red-200 rounded-lg py-2 px-3 text-sm focus:border-red-400 focus:ring-1 focus:ring-red-400 bg-white placeholder-red-300 text-red-700"></textarea>
-                    </div>
-                </div>
-
-                <div class="px-6 py-4 border-t border-slate-100 flex justify-end space-x-3 bg-white">
-                    <button type="button" onclick="toggleModalPaciente(false)" class="px-6 py-2.5 rounded-lg border border-slate-300 text-slate-600 font-bold text-xs tracking-wide hover:bg-slate-50 transition-colors">
-                        CANCELAR
-                    </button>
-                    <button type="button" onclick="guardarPaciente()" class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs tracking-wide shadow-md transition-colors">
-                        GUARDAR EXPEDIENTE
-                    </button>
-                </div>
+                </form>
             </div>
         </div>
+
+        <script>
+            function toggleModalPaciente(show) {
+                const modal = document.getElementById('modal-paciente');
+                if (show) {
+                    modal.classList.remove('hidden-view');
+                } else {
+                    modal.classList.add('hidden-view');
+                    limpiarFormulario();
+                }
+            }
+
+            function editPaciente(p) {
+                document.getElementById('edit-id-paciente').value = p.idPaciente;
+                document.getElementById('form-dni').value = p.dni;
+                document.getElementById('form-hc').value = p.numeroHistoriaClinica;
+                document.getElementById('form-nombres').value = p.nombres;
+                document.getElementById('form-apellidos').value = p.apellidos;
+                document.getElementById('form-nacimiento').value = p.fechaNacimiento;
+                document.getElementById('form-sexo').value = p.sexo;
+                document.getElementById('form-telefono').value = p.telefono;
+                document.getElementById('form-direccion').value = p.direccion;
+                document.getElementById('form-correo').value = p.correo || '';
+                document.getElementById('form-alergias').value = p.alergias || '';
+                
+                document.getElementById('modal-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Editar Paciente: ${p.numeroHistoriaClinica}`;
+                toggleModalPaciente(true);
+            }
+
+            function limpiarFormulario() {
+                document.getElementById('edit-id-paciente').value = '';
+                document.getElementById('form-dni').value = '';
+                document.getElementById('form-hc').value = 'Autogenerado al guardar';
+                document.getElementById('form-nombres').value = '';
+                document.getElementById('form-apellidos').value = '';
+                document.getElementById('form-nacimiento').value = '';
+                document.getElementById('form-sexo').value = 'M';
+                document.getElementById('form-telefono').value = '';
+                document.getElementById('form-direccion').value = '';
+                document.getElementById('form-correo').value = '';
+                document.getElementById('form-alergias').value = '';
+                document.getElementById('modal-title').innerHTML = `<span class="bg-emerald-100 text-emerald-600 p-1.5 rounded-lg mr-2 text-sm">👥</span> Registrar Nuevo Paciente`;
+            }
+        </script>
     </section>
 </body>
 </html>

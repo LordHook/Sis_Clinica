@@ -1,109 +1,61 @@
-/* ==========================================
-   1. CONFIGURACIÓN BASE Y FUENTES
-   ========================================== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-body { 
-    background-color: #f8fafc; 
-    color: #1e293b; 
-    font-family: 'Inter', sans-serif; 
-    margin: 0;
-}
+/* Estilos Modernos de Alta Fidelidad (Mockup) */
+body { background-color: #f8fafc; color: #1e293b; font-family: 'Inter', sans-serif; }
+.hidden-view { display: none !important; }
 
-.hidden-view { 
-    display: none !important; 
-}
+/* Cajas, Tarjetas y Paneles */
+.wire-box { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); }
+.wire-box-dashed { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 0.75rem; }
 
-/* ==========================================
-   2. ELEMENTOS DE FORMULARIO (WIRE)
-   ========================================== */
-.wire-box { 
-    background: #ffffff; 
-    border: 1px solid #e2e8f0; 
-    border-radius: 0.75rem; 
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); 
-}
+/* Inputs modernos */
+.wire-input { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 0.5rem; padding: 0.6rem 0.8rem; outline: none; width: 100%; font-size: 0.875rem; color: #334155; transition: all 0.2s; }
+.wire-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+.wire-input:disabled { background: #f1f5f9; color: #64748b; cursor: not-allowed; }
 
-.wire-input { 
-    background: #ffffff; 
-    border: 1px solid #cbd5e1; 
-    border-radius: 0.5rem; 
-    padding: 0.6rem 0.8rem; 
-    outline: none; 
-    width: 100%; 
-    font-size: 0.875rem; 
-    color: #334155; 
-    transition: all 0.2s; 
-}
-
-.wire-input:focus { 
-    border-color: #3b82f6; 
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); 
-}
-
-/* ==========================================
-   3. BOTONES
-   ========================================== */
-.wire-btn { 
-    background: #f1f5f9; 
-    border: 1px solid #cbd5e1; 
-    color: #475569; 
-    font-weight: 600; 
-    cursor: pointer; 
-    text-transform: uppercase; 
-    font-size: 0.75rem; 
-    letter-spacing: 0.05em; 
-    border-radius: 0.5rem; 
-    padding: 0.6rem 1rem;
-    transition: all 0.2s; 
-}
+/* Botones modernos */
+.wire-btn { background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; font-weight: 600; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; border-radius: 0.5rem; transition: all 0.2s; }
 .wire-btn:hover { background: #e2e8f0; color: #0f172a; }
 
-.wire-btn-dark { 
-    background: #2563eb; 
-    border: 1px solid #1d4ed8; 
-    color: #ffffff; 
-    font-weight: 600; 
-    cursor: pointer; 
-    text-transform: uppercase; 
-    font-size: 0.75rem; 
-    letter-spacing: 0.05em; 
-    border-radius: 0.5rem; 
-    padding: 0.6rem 1rem;
-    transition: all 0.2s; 
-    box-shadow: 0 1px 2px rgba(37,99,235, 0.3); 
-}
+.wire-btn-dark { background: #2563eb; border: 1px solid #1d4ed8; color: #ffffff; font-weight: 600; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; border-radius: 0.5rem; transition: all 0.2s; box-shadow: 0 1px 2px rgba(37,99,235, 0.3); }
 .wire-btn-dark:hover { background: #1d4ed8; box-shadow: 0 4px 6px rgba(37,99,235, 0.2); }
 
-/* ==========================================
-   4. NAVEGACIÓN
-   ========================================== */
-.nav-btn { border-radius: 0.5rem; font-size: 0.875rem; margin-bottom: 0.25rem; transition: all 0.2s; }
+/* Imágenes y Avatares */
+.wire-img { background: #e2e8f0; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: #64748b; font-weight: 600; font-size: 0.8rem; }
+
+/* Navegación Sidebar */
+.nav-btn { border-radius: 0.5rem; font-size: 0.875rem; margin-bottom: 0.25rem; transition: all 0.2s; text-decoration: none; }
 .nav-active { background-color: #eff6ff; color: #1d4ed8; font-weight: 600; border: none; }
 .nav-inactive { background-color: transparent; color: #64748b; font-weight: 500; border: none; }
 .nav-inactive:hover { background-color: #f1f5f9; color: #0f172a; }
 
-/* ==========================================
-   5. COMPONENTES VISUALES Y TABLAS
-   ========================================== */
+/* Gráfico de barras Moderno */
 .bar-chart-container { display: flex; align-items: flex-end; justify-content: space-around; height: 160px; border-bottom: 2px solid #e2e8f0; padding-top: 20px; padding-right: 10px; margin-top: 20px; width: 100%; gap: 1rem; }
 .bar { width: 100%; max-width: 48px; border-radius: 6px 6px 0 0; position: relative; display: flex; justify-content: center; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
 .bar-label-top { position: absolute; top: -25px; font-weight: 700; font-size: 13px; color: #334155; }
 .bar-label-bottom { position: absolute; bottom: -25px; font-weight: 600; font-size: 10px; text-transform: uppercase; color: #64748b; }
 
-table { width: 100%; border-collapse: collapse; }
-table th { background: #f8fafc; padding: 1rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700; border-bottom: 1px solid #e2e8f0; text-align: left; }
+/* Slots de Horario Modernos */
+.slot-libre { border: 1px solid #86efac; background: #f0fdf4; color: #166534; cursor: pointer; transition: 0.2s; border-radius: 0.5rem; font-weight: 600; }
+.slot-libre:hover { background: #dcfce7; border-color: #4ade80; box-shadow: 0 2px 4px rgba(74, 222, 128, 0.2); }
+.slot-ocupado { border: 1px solid #e2e8f0; background: #f8fafc; color: #94a3b8; cursor: not-allowed; text-decoration: line-through; border-radius: 0.5rem; font-weight: 500; }
+.slot-bloqueado { border: 1px solid #fca5a5; background: #fef2f2; color: #b91c1c; cursor: not-allowed; border-radius: 0.5rem; font-weight: 600; }
+
+/* Estilos de Tabla Profesionales */
+table th { background: #f8fafc; padding: 0.75rem 1rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 700; border-bottom: 1px solid #e2e8f0; }
 table td { padding: 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.875rem; color: #334155; }
 table tr:last-child td { border-bottom: none; }
 table tr:hover td { background-color: #f8fafc; }
 
+/* Badges de Estado */
 .badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; display: inline-block; }
 .badge-blue { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
 .badge-green { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.badge-yellow { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.badge-red { background: #fde8e8; color: #9b1c1c; border: 1px solid #fbd5d5; }
+.badge-gray { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
 
-/* ==========================================
-   6. SCROLLBAR
-   ========================================== */
+/* Ocultar barra de desplazamiento para mejor look */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }

@@ -3,14 +3,15 @@
 <body>
     <header th:fragment="header" class="h-16 border-b border-slate-200 flex items-center justify-between px-8 shrink-0 bg-white z-10">
         <div class="flex space-x-2 font-medium text-sm text-slate-500">
-            <span th:text="'Clínica UTP / ' + ${tituloCabecera}">Clínica UTP</span>
+            <span th:text="'Clínica UTP / ' + ${tituloCabecera}">Clínica UTP / Dashboard</span>
         </div>
         <div class="flex items-center border-l border-slate-200 pl-6">
             <div class="text-right mr-3">
-                <div class="text-sm font-bold text-slate-800">ADMINISTRADOR</div>
-                <div class="text-xs text-slate-500">En línea</div>
+                <div class="text-sm font-bold text-slate-800" th:text="${nombreCompleto != null ? nombreCompleto : 'Usuario'}">Usuario</div>
+                <div class="text-xs text-slate-500" th:text="${usuarioRol != null ? usuarioRol : 'En línea'}">En línea</div>
             </div>
-            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold">AD</div>
+            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-sm" 
+                 th:text="${usuarioSiglas != null ? usuarioSiglas : 'U'}">U</div>
         </div>
     </header>
 </body>

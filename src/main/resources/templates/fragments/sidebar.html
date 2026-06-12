@@ -3,42 +3,65 @@
 <body>
     <div th:fragment="sidebar" class="w-64 border-r border-slate-200 flex flex-col shrink-0 p-4 bg-white z-20">
         <div class="flex items-center mb-8 px-2 mt-2">
-            <div class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-xl mr-3 shadow-sm">C</div>
+            <div class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-xl mr-3 shadow-sm">🏥</div>
             <div>
-                <h2 class="font-black text-slate-800 tracking-wide">CLÍNICA UTP</h2>
+                <h2 class="font-black text-slate-800 tracking-wide text-sm">CLÍNICA UTP</h2>
                 <p class="text-xs text-slate-500 font-medium">Portal Médico</p>
             </div>
         </div>
         
-<nav class="flex-1 space-y-1 overflow-y-auto pr-2">
-    <div class="text-[10px] font-bold text-slate-400 mb-2 mt-4 uppercase tracking-wider px-3">Menú Operativo</div>
-    
-    <a th:href="@{/dashboard}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
-       th:classappend="${paginaActiva == 'dashboard'} ? 'nav-active' : 'nav-inactive'">
-       📊 Dashboard
-    </a>
-        <a th:href="@{/citas}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
-       th:classappend="${paginaActiva == 'citas'} ? 'nav-active' : 'nav-inactive'">
-       📅 Módulo Citas
-    </a>
-    <a th:href="@{/pacientes}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
-       th:classappend="${paginaActiva == 'pacientes'} ? 'nav-active' : 'nav-inactive'">
-       👥 Módulo Pacientes
-    </a>
-    <div class="space-y-1">
-    <a href="/farmacia" 
-       th:classappend="${active == 'farmacia'} ? 'bg-blue-50 text-blue-700' : 'text-slate-600'"
-       class="flex items-center px-4 py-3 rounded-lg hover:bg-blue-50 transition-colors">
-        <span class="mr-3">💊</span>
-        <span class="font-medium text-sm">Módulo Farmacia</span>
-    </a>
-</div>
+        <nav class="flex-1 space-y-1 overflow-y-auto pr-2">
+            <div class="text-[10px] font-bold text-slate-400 mb-2 mt-4 uppercase tracking-wider px-3">Menú Operativo</div>
+            
+            <!-- Dashboard Link (All Roles) -->
+            <a th:href="@{/dashboard}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+               th:classappend="${paginaActiva == 'dashboard'} ? 'nav-active' : 'nav-inactive'">
+               <span class="mr-3 text-lg opacity-70">📊</span> Dashboard
+            </a>
+            
+            <!-- Citas Link (ADMIN, RECEPCIONISTA) -->
+            <a th:if="${usuarioRol == 'ADMINISTRADOR' || usuarioRol == 'RECEPCIONISTA'}"
+               th:href="@{/citas}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+               th:classappend="${paginaActiva == 'citas'} ? 'nav-active' : 'nav-inactive'">
+               <span class="mr-3 text-lg opacity-70">📅</span> Módulo Citas
+            </a>
+            
+            <!-- Pacientes Link (ADMIN, RECEPCIONISTA, MEDICO) -->
+            <a th:if="${usuarioRol == 'ADMINISTRADOR' || usuarioRol == 'RECEPCIONISTA' || usuarioRol == 'MEDICO'}"
+               th:href="@{/pacientes}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+               th:classappend="${paginaActiva == 'pacientes'} ? 'nav-active' : 'nav-inactive'">
+               <span class="mr-3 text-lg opacity-70">👥</span> Módulo Pacientes
+            </a>
+            
+            <!-- Farmacia Link (ADMIN, FARMACEUTICO) -->
+            <a th:if="${usuarioRol == 'ADMINISTRADOR' || usuarioRol == 'FARMACEUTICO'}"
+               th:href="@{/farmacia}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+               th:classappend="${paginaActiva == 'farmacia'} ? 'nav-active' : 'nav-inactive'">
+               <span class="mr-3 text-lg opacity-70">💊</span> Módulo Farmacia
+            </a>
+            
+            <!-- Administración (ADMIN only) -->
+            <div th:if="${usuarioRol == 'ADMINISTRADOR'}">
+                <div class="text-[10px] font-bold text-slate-400 mb-2 mt-6 uppercase tracking-wider px-3">Administración</div>
+                
+                <a th:href="@{/usuarios}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+                   th:classappend="${paginaActiva == 'usuarios'} ? 'nav-active' : 'nav-inactive'">
+                   <span class="mr-3 text-lg opacity-70">🛡️</span> Gestión Usuarios
+                </a>
+                
+                <a th:href="@{/horarios}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+                   th:classappend="${paginaActiva == 'horarios'} ? 'nav-active' : 'nav-inactive'">
+                   <span class="mr-3 text-lg opacity-70">⏰</span> Gestión Horarios
+                </a>
+            </div>
+        </nav>
 
-</nav>
-
-        <a th:href="@{/login}" class="mt-6 py-3 w-full text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-center font-semibold text-sm transition">
-            <span class="mr-2">🚪</span> Cerrar Sesión
-        </a>
+        <!-- Logout Form (POST request is safer and standard for Spring Security) -->
+        <form th:action="@{/logout}" method="post" class="mt-6">
+            <button type="submit" class="py-3 w-full text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-center font-semibold text-sm transition border-0 bg-transparent cursor-pointer">
+                <span class="mr-2">🚪</span> Cerrar Sesión
+            </button>
+        </form>
     </div>
 </body>
 </html>
