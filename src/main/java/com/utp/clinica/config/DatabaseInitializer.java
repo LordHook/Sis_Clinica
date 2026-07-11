@@ -91,7 +91,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             admin.setDni("10000001");
             admin.setNombres("Admin");
             admin.setApellidos("General");
-            admin.setUsuario("admin");
+            admin.setUsuario("admin@clinica.pe");
             admin.setContrasena(passwordEncoder.encode("admin"));
             admin.setRol(Usuario.Rol.ADMINISTRADOR);
             admin.setEstado(true);
@@ -101,7 +101,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             recep.setDni("20000002");
             recep.setNombres("Rosa");
             recep.setApellidos("Pérez");
-            recep.setUsuario("recep");
+            recep.setUsuario("recep@clinica.pe");
             recep.setContrasena(passwordEncoder.encode("recep"));
             recep.setRol(Usuario.Rol.RECEPCIONISTA);
             recep.setEstado(true);
@@ -111,7 +111,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             medico.setDni("10293847");
             medico.setNombres("Juan Carlos");
             medico.setApellidos("Pérez");
-            medico.setUsuario("jperez");
+            medico.setUsuario("jperez@clinica.pe");
             medico.setContrasena(passwordEncoder.encode("medico"));
             medico.setRol(Usuario.Rol.MEDICO);
             medico.setEstado(true);
@@ -122,7 +122,7 @@ public class DatabaseInitializer implements CommandLineRunner {
             farma.setDni("40000004");
             farma.setNombres("Felipe");
             farma.setApellidos("López");
-            farma.setUsuario("farma");
+            farma.setUsuario("farma@clinica.pe");
             farma.setContrasena(passwordEncoder.encode("farma"));
             farma.setRol(Usuario.Rol.FARMACEUTICO);
             farma.setEstado(true);
@@ -132,7 +132,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         }
 
         // Recuperar médico para horario y citas
-        Usuario drPerez = usuarioRepo.findByUsuario("jperez").orElse(null);
+        Usuario drPerez = usuarioRepo.findByUsuario("jperez@clinica.pe").orElse(null);
 
         // 5. Sembrar Horario del médico
         if (horarioRepo.count() == 0 && drPerez != null) {

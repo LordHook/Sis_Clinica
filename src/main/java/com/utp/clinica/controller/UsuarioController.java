@@ -33,6 +33,10 @@ public class UsuarioController {
                           @RequestParam("rol") String rol,
                           @RequestParam(value = "idEspecialidad", required = false) Integer idEspecialidad) {
 
+        if (username == null || !username.contains("@")) {
+            return "redirect:/usuarios?error"; // Podría manejarse con un mensaje de error más específico
+        }
+
         Usuario usuario = new Usuario();
         if (idUsuario != null) {
             usuario.setIdUsuario(idUsuario);
