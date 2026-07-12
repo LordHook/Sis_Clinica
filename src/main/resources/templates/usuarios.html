@@ -21,6 +21,10 @@
             <span class="mr-2 text-xl">🛑</span>
             <span class="block sm:inline font-medium">No se puede eliminar el usuario porque tiene registros asociados (citas o historial). Se recomienda <b>desactivarlo</b> cambiando su estado.</span>
         </div>
+        <div th:if="${param.errorAdmin}" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-6 shadow-sm flex items-center" role="alert">
+            <span class="mr-2 text-xl">🔒</span>
+            <span class="block sm:inline font-medium">No se puede eliminar ni desactivar al administrador principal del sistema.</span>
+        </div>
 
         <!-- Filter Search Bar -->
         <form th:action="@{/usuarios}" method="get" class="wire-box p-4 mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white shadow-sm border-0">
@@ -70,19 +74,42 @@
                         </td>
                         <td class="p-4 text-right font-medium text-xs">
                             <div class="flex justify-end items-center space-x-2">
-                                <button type="button" th:onclick="editUsuario([[${u}]])" class="text-blue-600 hover:text-blue-800 border-0 bg-transparent cursor-pointer font-bold">Editar</button>
+                                <button type="button" 
+                                        th:data-id="${u.idUsuario}"
+                                        th:data-dni="${u.dni}"
+                                        th:data-rol="${u.rol.name()}"
+                                        th:data-nombres="${u.nombres}"
+                                        th:data-apellidos="${u.apellidos}"
+                                        th:data-usuario="${u.usuario}"
+                                        th:data-especialidad="${u.especialidad != null ? u.especialidad.idEspecialidad : ''}"
+                                        onclick="editUsuario(this)" 
+                                        class="text-blue-600 hover:text-blue-800 border-0 bg-transparent cursor-pointer font-bold">Editar</button>
                                 
-                                <!-- Toggle account active status -->
-                                <form th:action="@{/usuarios/estado/{id}(id=${u.idUsuario})}" method="post">
-                                    <input type="hidden" name="estado" th:value="${!u.estado}" />
-                                    <button type="submit" class="border-0 bg-transparent cursor-pointer font-bold"
-                                            th:classappend="${u.estado} ? 'text-amber-600 hover:text-amber-800' : 'text-green-600 hover:text-green-800'"
-                                            th:text="${u.estado ? 'Desactivar' : 'Activar'}">Cambiar</button>
-                                </form>
+                                <!-- Botón Permisos (no para el admin principal) -->
+                                <button type="button" 
+                                        th:if="${!(u.rol.name() == 'ADMINISTRADOR')}"
+                                        th:data-id="${u.idUsuario}"
+                                        th:data-nombrecompleto="${u.nombres + ' ' + u.apellidos}"
+                                        onclick="abrirModalPermisos(this)"
+                                        class="text-purple-600 hover:text-purple-800 border-0 bg-transparent cursor-pointer font-bold">Permisos</button>
+                                
+                                <!-- Toggle account active status (no para admin principal) -->
+                                <th:block th:if="${u.idUsuario != adminPrincipalId}">
+                                    <form th:action="@{/usuarios/estado/{id}(id=${u.idUsuario})}" method="post">
+                                        <input type="hidden" name="estado" th:value="${!u.estado}" />
+                                        <button type="submit" class="border-0 bg-transparent cursor-pointer font-bold"
+                                                th:classappend="${u.estado} ? 'text-amber-600 hover:text-amber-800' : 'text-green-600 hover:text-green-800'"
+                                                th:text="${u.estado ? 'Desactivar' : 'Activar'}">Cambiar</button>
+                                    </form>
 
-                                <form th:action="@{/usuarios/eliminar/{id}(id=${u.idUsuario})}" method="post" onsubmit="return confirm('¿Está seguro de eliminar este usuario?');">
-                                    <button type="submit" class="text-red-500 hover:text-red-700 border-0 bg-transparent cursor-pointer font-bold">Eliminar</button>
-                                </form>
+                                    <form th:action="@{/usuarios/eliminar/{id}(id=${u.idUsuario})}" method="post" onsubmit="return confirm('¿Está seguro de eliminar este usuario?');">
+                                        <button type="submit" class="text-red-500 hover:text-red-700 border-0 bg-transparent cursor-pointer font-bold">Eliminar</button>
+                                    </form>
+                                </th:block>
+                                
+                                <!-- Indicador de admin principal -->
+                                <span th:if="${u.idUsuario == adminPrincipalId}"
+                                      class="text-slate-400 text-[10px] italic ml-1">🔒 Admin Principal</span>
                             </div>
                         </td>
                     </tr>
@@ -96,8 +123,9 @@
         <!-- Add/Edit User Modal -->
         <div id="modal-usuario" class="hidden-view fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
             <div class="wire-box w-full max-w-2xl flex flex-col border-0 shadow-2xl overflow-hidden rounded-2xl bg-white">
-                <form th:action="@{/usuarios/guardar}" method="post" onsubmit="return validarContrasenas();">
+                <form th:action="@{/usuarios/guardar}" method="post" onsubmit="return validarFormulario();">
                     <input type="hidden" name="idUsuario" id="edit-id-usuario">
+                    <input type="hidden" name="usuario" id="form-user-hidden-email">
                     
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
                         <h3 class="font-bold text-lg text-slate-800 flex items-center" id="modal-user-title">
@@ -148,7 +176,15 @@
                             <div class="grid grid-cols-1 gap-5 mb-4">
                                 <div>
                                     <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nombre de Usuario</label>
-                                    <input type="email" name="usuario" id="form-user-usuario" placeholder="Ej. jperez@clinica.pe" class="wire-input font-mono bg-slate-50" required />
+                                    <div class="flex items-stretch">
+                                        <input type="text" id="form-user-username-prefix" 
+                                               placeholder="Ej. jperez" 
+                                               class="wire-input font-mono bg-slate-50 rounded-r-none border-r-0 flex-1" 
+                                               oninput="actualizarCorreoUsuario()" 
+                                               required />
+                                        <span class="inline-flex items-center px-4 bg-blue-600 text-white font-semibold text-sm rounded-r-lg border border-blue-600 whitespace-nowrap">@clinica.pe</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1" id="preview-email">Vista previa: —</p>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-5">
@@ -172,7 +208,88 @@
             </div>
         </div>
 
+        <!-- Permissions Modal -->
+        <div id="modal-permisos" class="hidden-view fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
+            <div class="wire-box w-full max-w-lg flex flex-col border-0 shadow-2xl overflow-hidden rounded-2xl bg-white">
+                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
+                    <h3 class="font-bold text-lg text-slate-800 flex items-center" id="modal-permisos-title">
+                        <span class="bg-purple-100 text-purple-600 p-1.5 rounded-lg mr-2 text-sm">🛡️</span> Delegar Permisos y Vistas
+                    </h3>
+                    <button type="button" onclick="cerrarModalPermisos()" class="text-slate-400 hover:text-slate-700 text-xl leading-none border-0 bg-transparent cursor-pointer">&times;</button>
+                </div>
+                
+                <div class="p-6 bg-slate-50">
+                    <p class="text-sm text-slate-600 mb-4">Seleccione los módulos a los que este usuario tendrá acceso:</p>
+                    <input type="hidden" id="permisos-user-id">
+                    
+                    <div class="space-y-3">
+                        <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+                            <input type="checkbox" id="perm-dashboard" value="dashboard" class="w-4 h-4 text-blue-600 rounded mr-3" checked disabled>
+                            <span class="mr-2 text-lg">📊</span>
+                            <div>
+                                <span class="font-semibold text-sm text-slate-800">Dashboard</span>
+                                <p class="text-xs text-slate-400">Panel de control general</p>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+                            <input type="checkbox" id="perm-citas" value="citas" class="w-4 h-4 text-blue-600 rounded mr-3">
+                            <span class="mr-2 text-lg">📅</span>
+                            <div>
+                                <span class="font-semibold text-sm text-slate-800">Módulo Citas</span>
+                                <p class="text-xs text-slate-400">Agendamiento y gestión de citas</p>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+                            <input type="checkbox" id="perm-pacientes" value="pacientes" class="w-4 h-4 text-blue-600 rounded mr-3">
+                            <span class="mr-2 text-lg">👥</span>
+                            <div>
+                                <span class="font-semibold text-sm text-slate-800">Módulo Pacientes</span>
+                                <p class="text-xs text-slate-400">Directorio y fichas de pacientes</p>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+                            <input type="checkbox" id="perm-farmacia" value="farmacia" class="w-4 h-4 text-blue-600 rounded mr-3">
+                            <span class="mr-2 text-lg">💊</span>
+                            <div>
+                                <span class="font-semibold text-sm text-slate-800">Módulo Farmacia</span>
+                                <p class="text-xs text-slate-400">Despacho farmacéutico y recetas</p>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+                            <input type="checkbox" id="perm-horarios" value="horarios" class="w-4 h-4 text-blue-600 rounded mr-3">
+                            <span class="mr-2 text-lg">⏰</span>
+                            <div>
+                                <span class="font-semibold text-sm text-slate-800">Gestión Horarios</span>
+                                <p class="text-xs text-slate-400">Horarios y bloqueos de agenda</p>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+                            <input type="checkbox" id="perm-usuarios" value="usuarios" class="w-4 h-4 text-blue-600 rounded mr-3">
+                            <span class="mr-2 text-lg">🛡️</span>
+                            <div>
+                                <span class="font-semibold text-sm text-slate-800">Gestión Usuarios</span>
+                                <p class="text-xs text-slate-400">Administración de personal</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="p-5 border-t border-slate-100 flex justify-end space-x-3 bg-white">
+                    <button type="button" onclick="cerrarModalPermisos()" class="wire-btn px-5 py-2.5 cursor-pointer">Cancelar</button>
+                    <button type="button" onclick="guardarPermisos()" class="px-6 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm shadow-md transition-colors cursor-pointer">
+                        Guardar Permisos
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <script>
+            // ========== MODAL USUARIO ==========
             function toggleModalUsuario(show) {
                 const modal = document.getElementById('modal-usuario');
                 if (show) {
@@ -198,13 +315,36 @@
                 }
             }
 
-            function editUsuario(u) {
-                document.getElementById('edit-id-usuario').value = u.idUsuario;
-                document.getElementById('form-user-dni').value = u.dni;
-                document.getElementById('user-role-select').value = u.rol;
-                document.getElementById('form-user-nombres').value = u.nombres;
-                document.getElementById('form-user-apellidos').value = u.apellidos;
-                document.getElementById('form-user-usuario').value = u.usuario;
+            /**
+             * Actualiza el campo hidden de email con el prefijo + @clinica.pe
+             */
+            function actualizarCorreoUsuario() {
+                const prefix = document.getElementById('form-user-username-prefix').value.trim();
+                const fullEmail = prefix ? prefix + '@clinica.pe' : '';
+                document.getElementById('form-user-hidden-email').value = fullEmail;
+                document.getElementById('preview-email').innerText = fullEmail ? 'Vista previa: ' + fullEmail : 'Vista previa: —';
+            }
+
+            function editUsuario(btn) {
+                const id = btn.getAttribute('data-id');
+                const dni = btn.getAttribute('data-dni');
+                const rol = btn.getAttribute('data-rol');
+                const nombres = btn.getAttribute('data-nombres');
+                const apellidos = btn.getAttribute('data-apellidos');
+                const usuario = btn.getAttribute('data-usuario');
+                const idEspecialidad = btn.getAttribute('data-especialidad');
+
+                document.getElementById('edit-id-usuario').value = id;
+                document.getElementById('form-user-dni').value = dni;
+                document.getElementById('user-role-select').value = rol;
+                document.getElementById('form-user-nombres').value = nombres;
+                document.getElementById('form-user-apellidos').value = apellidos;
+                
+                // Extraer el prefijo del correo (antes de @clinica.pe)
+                const emailParts = usuario.split('@');
+                document.getElementById('form-user-username-prefix').value = emailParts[0] || '';
+                document.getElementById('form-user-hidden-email').value = usuario;
+                document.getElementById('preview-email').innerText = 'Vista previa: ' + usuario;
                 
                 // For editing, password is not strictly required if keeping old password
                 document.getElementById('form-user-pass').removeAttribute('required');
@@ -212,14 +352,14 @@
                 document.getElementById('pass-label').innerText = "Nueva Contraseña (Opcional)";
                 document.getElementById('confirm-pass-label').innerText = "Confirmar Contraseña (Opcional)";
                 
-                if (u.especialidad) {
-                    document.getElementById('form-user-especialidad').value = u.especialidad.idEspecialidad;
+                if (idEspecialidad) {
+                    document.getElementById('form-user-especialidad').value = idEspecialidad;
                 } else {
                     document.getElementById('form-user-especialidad').value = '';
                 }
                 
                 toggleEspecialidad();
-                document.getElementById('modal-user-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Editar Personal: ${u.usuario}`;
+                document.getElementById('modal-user-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Editar Personal: ${usuario}`;
                 toggleModalUsuario(true);
             }
 
@@ -229,7 +369,9 @@
                 document.getElementById('user-role-select').value = 'ADMINISTRADOR';
                 document.getElementById('form-user-nombres').value = '';
                 document.getElementById('form-user-apellidos').value = '';
-                document.getElementById('form-user-usuario').value = '';
+                document.getElementById('form-user-username-prefix').value = '';
+                document.getElementById('form-user-hidden-email').value = '';
+                document.getElementById('preview-email').innerText = 'Vista previa: —';
                 document.getElementById('form-user-pass').value = '';
                 document.getElementById('form-user-pass-confirm').value = '';
                 document.getElementById('form-user-especialidad').value = '';
@@ -243,15 +385,94 @@
                 document.getElementById('modal-user-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Registrar Personal / Usuario`;
             }
 
-            function validarContrasenas() {
+            function validarFormulario() {
+                // Asegurar que el correo se haya generado
+                actualizarCorreoUsuario();
+                const email = document.getElementById('form-user-hidden-email').value;
+                if (!email || !email.includes('@')) {
+                    alert("Debe ingresar un identificador de usuario válido.");
+                    return false;
+                }
+
                 const pass = document.getElementById('form-user-pass').value;
-                const confirm = document.getElementById('form-user-pass-confirm').value;
+                const confirmPass = document.getElementById('form-user-pass-confirm').value;
                 
-                if (pass && pass !== confirm) {
+                if (pass && pass !== confirmPass) {
                     alert("Las contraseñas no coinciden.");
                     return false;
                 }
                 return true;
+            }
+
+            // ========== MODAL PERMISOS ==========
+            function abrirModalPermisos(btn) {
+                const idUsuario = btn.getAttribute('data-id');
+                const nombreCompleto = btn.getAttribute('data-nombrecompleto');
+                
+                document.getElementById('permisos-user-id').value = idUsuario;
+                document.getElementById('modal-permisos-title').innerHTML = `<span class="bg-purple-100 text-purple-600 p-1.5 rounded-lg mr-2 text-sm">🛡️</span> Permisos: ${nombreCompleto}`;
+                
+                // Resetear todos los checkboxes
+                const checkboxes = ['perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-horarios', 'perm-usuarios'];
+                checkboxes.forEach(id => {
+                    document.getElementById(id).checked = false;
+                });
+                // Dashboard siempre activo
+                document.getElementById('perm-dashboard').checked = true;
+
+                // Cargar permisos actuales del usuario
+                fetch(`/usuarios/permisos/${idUsuario}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const permisos = data.permisos || [];
+                        permisos.forEach(modulo => {
+                            const checkbox = document.getElementById('perm-' + modulo);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        });
+                        document.getElementById('modal-permisos').classList.remove('hidden-view');
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar permisos:', error);
+                        document.getElementById('modal-permisos').classList.remove('hidden-view');
+                    });
+            }
+
+            function cerrarModalPermisos() {
+                document.getElementById('modal-permisos').classList.add('hidden-view');
+            }
+
+            function guardarPermisos() {
+                const idUsuario = document.getElementById('permisos-user-id').value;
+                const modulos = ['dashboard']; // Dashboard siempre incluido
+                
+                const checkboxes = ['perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-horarios', 'perm-usuarios'];
+                checkboxes.forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox.checked) {
+                        modulos.push(checkbox.value);
+                    }
+                });
+
+                fetch(`/usuarios/permisos/${idUsuario}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ modulos: modulos })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Permisos actualizados correctamente.');
+                        cerrarModalPermisos();
+                    } else {
+                        return response.json().then(err => { throw new Error(err.error); });
+                    }
+                })
+                .catch(error => {
+                    alert('Error al guardar permisos: ' + error.message);
+                });
             }
         </script>
     </section>

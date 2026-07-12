@@ -30,4 +30,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
      * Búsqueda general de personal por DNI, nombres o apellidos
      */
     List<Usuario> findByDniContainingOrNombresContainingOrApellidosContaining(String dni, String nombres, String apellidos);
+
+    /**
+     * Busca usuarios por rol y especialidad (para filtrar médicos por especialidad en citas)
+     */
+    List<Usuario> findByRolAndEspecialidad_IdEspecialidad(Usuario.Rol rol, Integer idEspecialidad);
 }

@@ -45,6 +45,19 @@ public class AppViewController {
                 model.addAttribute("nombreCompleto", u.getNombres() + " " + u.getApellidos());
                 model.addAttribute("usuarioRol", u.getRol().name());
                 model.addAttribute("usuarioSiglas", (u.getNombres().substring(0, 1) + u.getApellidos().substring(0, 1)).toUpperCase());
+
+                // Cargar permisos del usuario para el sidebar
+                if (u.getRol() == Usuario.Rol.ADMINISTRADOR) {
+                    // El administrador siempre tiene acceso a todos los módulos
+                    model.addAttribute("permisosUsuario", Arrays.asList("dashboard", "citas", "pacientes", "farmacia", "horarios", "usuarios"));
+                } else {
+                    List<String> permisos = usuarioService.obtenerPermisos(u.getIdUsuario());
+                    if (permisos.isEmpty()) {
+                        // Si no hay permisos guardados, usar los por defecto del rol
+                        permisos = usuarioService.obtenerPermisosDefecto(u.getRol());
+                    }
+                    model.addAttribute("permisosUsuario", permisos);
+                }
             });
         }
     }
@@ -117,11 +130,7 @@ public class AppViewController {
         int totalPacientes = pacienteService.listarTodos().size();
         model.addAttribute("totalPacientes", totalPacientes);
 
-        // 2. Medicamentos con Bajo Stock (< 50)
-        List<Medicamento> bajoStock = farmaciaService.listarMedicamentos().stream()
-                .filter(m -> m.getStock() < 50)
-                .collect(Collectors.toList());
-        model.addAttribute("medicamentosBajoStock", bajoStock);
+
 
         // 3. Eficiencia de Citas Atendidas
         long citasAtendidas = citasHoy.stream()
@@ -155,7 +164,6 @@ public class AppViewController {
 
         // Combos del Modal de Registro
         model.addAttribute("pacientes", pacienteService.listarTodos());
-        model.addAttribute("medicos", usuarioService.listarPorRol(Usuario.Rol.MEDICO));
         model.addAttribute("especialidades", especialidadRepo.findAll());
         model.addAttribute("consultorios", consultorioRepo.findAll());
 
@@ -243,6 +251,12 @@ public class AppViewController {
         List<Usuario> usuarios = usuarioService.buscarPersonal(busqueda);
         model.addAttribute("usuarios", usuarios);
         model.addAttribute("especialidades", especialidadRepo.findAll());
+
+        // Calcular el ID del admin principal (el primer admin creado)
+        Integer adminPrincipalId = usuarioService.listarPorRol(Usuario.Rol.ADMINISTRADOR).stream()
+                .mapToInt(Usuario::getIdUsuario)
+                .min().orElse(-1);
+        model.addAttribute("adminPrincipalId", adminPrincipalId);
 
         return "usuarios";
     }

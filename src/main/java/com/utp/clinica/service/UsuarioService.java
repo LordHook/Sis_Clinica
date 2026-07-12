@@ -1,13 +1,17 @@
 package com.utp.clinica.service;
 
+import com.utp.clinica.model.PermisoUsuario;
 import com.utp.clinica.model.Usuario;
+import com.utp.clinica.repository.PermisoUsuarioRepository;
 import com.utp.clinica.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Servicio encargado de gestionar la lógica de negocio para la administración de personal y usuarios
@@ -20,6 +24,9 @@ public class UsuarioService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private PermisoUsuarioRepository permisoRepo;
 
     /**
      * Lista todos los usuarios registrados
@@ -116,4 +123,59 @@ public class UsuarioService {
         }
         return false;
     }
+
+    // ========== MÉTODOS DE PERMISOS ==========
+
+    /**
+     * Obtiene la lista de módulos permitidos para un usuario
+     */
+    public List<String> obtenerPermisos(Integer idUsuario) {
+        Optional<Usuario> userOpt = usuarioRepo.findById(idUsuario);
+        if (userOpt.isPresent()) {
+            List<PermisoUsuario> permisos = permisoRepo.findByUsuario(userOpt.get());
+            return permisos.stream()
+                    .map(PermisoUsuario::getModulo)
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+    /**
+     * Reemplaza los permisos de un usuario por una nueva lista de módulos
+     */
+    @Transactional
+    public void guardarPermisos(Integer idUsuario, List<String> modulos) {
+        Optional<Usuario> userOpt = usuarioRepo.findById(idUsuario);
+        if (userOpt.isPresent()) {
+            Usuario usuario = userOpt.get();
+            // Eliminar permisos anteriores
+            permisoRepo.deleteByUsuario(usuario);
+            // Guardar nuevos permisos
+            for (String modulo : modulos) {
+                PermisoUsuario permiso = new PermisoUsuario();
+                permiso.setUsuario(usuario);
+                permiso.setModulo(modulo);
+                permisoRepo.save(permiso);
+            }
+        }
+    }
+
+    /**
+     * Retorna los módulos por defecto según el rol del usuario
+     */
+    public List<String> obtenerPermisosDefecto(Usuario.Rol rol) {
+        switch (rol) {
+            case ADMINISTRADOR:
+                return Arrays.asList("dashboard", "citas", "pacientes", "farmacia", "horarios", "usuarios");
+            case RECEPCIONISTA:
+                return Arrays.asList("dashboard", "citas", "pacientes");
+            case MEDICO:
+                return Arrays.asList("dashboard", "citas", "pacientes", "horarios");
+            case FARMACEUTICO:
+                return Arrays.asList("dashboard", "farmacia");
+            default:
+                return Arrays.asList("dashboard");
+        }
+    }
 }
+

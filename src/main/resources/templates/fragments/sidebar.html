@@ -13,43 +13,46 @@
         <nav class="flex-1 space-y-1 overflow-y-auto pr-2">
             <div class="text-[10px] font-bold text-slate-400 mb-2 mt-4 uppercase tracking-wider px-3">Menú Operativo</div>
             
-            <!-- Dashboard Link (All Roles) -->
-            <a th:href="@{/dashboard}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+            <!-- Dashboard Link (visible si tiene permiso 'dashboard') -->
+            <a th:if="${permisosUsuario != null && permisosUsuario.contains('dashboard')}"
+               th:href="@{/dashboard}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
                th:classappend="${paginaActiva == 'dashboard'} ? 'nav-active' : 'nav-inactive'">
                <span class="mr-3 text-lg opacity-70">📊</span> Dashboard
             </a>
             
-            <!-- Citas Link (ADMIN, RECEPCIONISTA) -->
-            <a th:if="${usuarioRol == 'ADMINISTRADOR' || usuarioRol == 'RECEPCIONISTA'}"
+            <!-- Citas Link (visible si tiene permiso 'citas') -->
+            <a th:if="${permisosUsuario != null && permisosUsuario.contains('citas')}"
                th:href="@{/citas}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
                th:classappend="${paginaActiva == 'citas'} ? 'nav-active' : 'nav-inactive'">
                <span class="mr-3 text-lg opacity-70">📅</span> Módulo Citas
             </a>
             
-            <!-- Pacientes Link (ADMIN, RECEPCIONISTA, MEDICO) -->
-            <a th:if="${usuarioRol == 'ADMINISTRADOR' || usuarioRol == 'RECEPCIONISTA' || usuarioRol == 'MEDICO'}"
+            <!-- Pacientes Link (visible si tiene permiso 'pacientes') -->
+            <a th:if="${permisosUsuario != null && permisosUsuario.contains('pacientes')}"
                th:href="@{/pacientes}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
                th:classappend="${paginaActiva == 'pacientes'} ? 'nav-active' : 'nav-inactive'">
                <span class="mr-3 text-lg opacity-70">👥</span> Módulo Pacientes
             </a>
             
-            <!-- Farmacia Link (ADMIN, FARMACEUTICO) -->
-            <a th:if="${usuarioRol == 'ADMINISTRADOR' || usuarioRol == 'FARMACEUTICO'}"
+            <!-- Farmacia Link (visible si tiene permiso 'farmacia') -->
+            <a th:if="${permisosUsuario != null && permisosUsuario.contains('farmacia')}"
                th:href="@{/farmacia}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
                th:classappend="${paginaActiva == 'farmacia'} ? 'nav-active' : 'nav-inactive'">
                <span class="mr-3 text-lg opacity-70">💊</span> Módulo Farmacia
             </a>
             
-            <!-- Administración (ADMIN only) -->
-            <div th:if="${usuarioRol == 'ADMINISTRADOR'}">
+            <!-- Administración (visible si tiene permiso 'usuarios' o 'horarios') -->
+            <div th:if="${permisosUsuario != null && (permisosUsuario.contains('usuarios') || permisosUsuario.contains('horarios'))}">
                 <div class="text-[10px] font-bold text-slate-400 mb-2 mt-6 uppercase tracking-wider px-3">Administración</div>
                 
-                <a th:href="@{/usuarios}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+                <a th:if="${permisosUsuario.contains('usuarios')}"
+                   th:href="@{/usuarios}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
                    th:classappend="${paginaActiva == 'usuarios'} ? 'nav-active' : 'nav-inactive'">
                    <span class="mr-3 text-lg opacity-70">🛡️</span> Gestión Usuarios
                 </a>
                 
-                <a th:href="@{/horarios}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+                <a th:if="${permisosUsuario.contains('horarios')}"
+                   th:href="@{/horarios}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
                    th:classappend="${paginaActiva == 'horarios'} ? 'nav-active' : 'nav-inactive'">
                    <span class="mr-3 text-lg opacity-70">⏰</span> Gestión Horarios
                 </a>

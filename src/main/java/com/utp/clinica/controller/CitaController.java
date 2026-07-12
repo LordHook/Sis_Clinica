@@ -8,7 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Controlador encargado de procesar peticiones y acciones de citas médicas
@@ -22,6 +24,26 @@ public class CitaController {
     @Autowired private UsuarioService usuarioService;
     @Autowired private com.utp.clinica.repository.EspecialidadRepository especialidadRepo;
     @Autowired private com.utp.clinica.repository.ConsultorioRepository consultorioRepo;
+    @Autowired private com.utp.clinica.repository.UsuarioRepository usuarioRepo;
+
+    /**
+     * Endpoint REST para obtener los médicos de una especialidad determinada
+     * Usado por el JavaScript del modal de citas para filtrar dinámicamente
+     */
+    @GetMapping("/medicos-por-especialidad")
+    @ResponseBody
+    public ResponseEntity<?> medicosPorEspecialidad(@RequestParam("idEspecialidad") Integer idEspecialidad) {
+        List<Usuario> medicos = usuarioRepo.findByRolAndEspecialidad_IdEspecialidad(Usuario.Rol.MEDICO, idEspecialidad);
+        List<Map<String, Object>> resultado = medicos.stream()
+                .filter(m -> m.getEstado()) // Solo médicos activos
+                .map(m -> Map.<String, Object>of(
+                        "idUsuario", m.getIdUsuario(),
+                        "nombres", m.getNombres(),
+                        "apellidos", m.getApellidos()
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(resultado);
+    }
 
     /**
      * Agendar una nueva cita (llamada AJAX/REST)

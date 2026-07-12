@@ -27,6 +27,7 @@ public class DatabaseInitializer implements CommandLineRunner {
     @Autowired private PacienteRepository pacienteRepo;
     @Autowired private CitaRepository citaRepo;
     @Autowired private HorarioMedicoRepository horarioRepo;
+    @Autowired private PermisoUsuarioRepository permisoRepo;
     @Autowired private PasswordEncoder passwordEncoder;
 
     @Override
@@ -129,6 +130,13 @@ public class DatabaseInitializer implements CommandLineRunner {
 
             usuarioRepo.saveAll(Arrays.asList(admin, recep, medico, farma));
             System.out.println("[DB INIT] Usuarios (admin, recep, jperez, farma) creados.");
+
+            // Sembrar permisos por defecto para cada usuario
+            sembrarPermisosDefecto(admin, Arrays.asList("dashboard", "citas", "pacientes", "farmacia", "horarios", "usuarios"));
+            sembrarPermisosDefecto(recep, Arrays.asList("dashboard", "citas", "pacientes"));
+            sembrarPermisosDefecto(medico, Arrays.asList("dashboard", "citas", "pacientes", "horarios"));
+            sembrarPermisosDefecto(farma, Arrays.asList("dashboard", "farmacia"));
+            System.out.println("[DB INIT] Permisos por defecto asignados.");
         }
 
         // Recuperar médico para horario y citas
@@ -237,5 +245,17 @@ public class DatabaseInitializer implements CommandLineRunner {
         }
 
         System.out.println("====== PROCESO DE INICIALIZACIÓN DE DB COMPLETADO CON ÉXITO ======");
+    }
+
+    /**
+     * Helper para sembrar permisos por defecto de un usuario
+     */
+    private void sembrarPermisosDefecto(Usuario usuario, List<String> modulos) {
+        for (String modulo : modulos) {
+            PermisoUsuario permiso = new PermisoUsuario();
+            permiso.setUsuario(usuario);
+            permiso.setModulo(modulo);
+            permisoRepo.save(permiso);
+        }
     }
 }

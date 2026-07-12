@@ -36,12 +36,14 @@ public class SecurityConfig {
                 // Recursos estáticos y pantalla de login públicos
                 .requestMatchers("/login", "/recuperar-password", "/css/**", "/js/**", "/images/**").permitAll()
                 
-                // Módulo Usuarios y Horarios exclusivo de Administradores
+                // Módulo Usuarios exclusivo de Administradores
                 .requestMatchers("/usuarios/**", "/api/usuarios/**").hasRole("ADMINISTRADOR")
-                .requestMatchers("/horarios/**", "/api/horarios/**").hasRole("ADMINISTRADOR")
                 
-                // Módulo Citas permitido para Recepcionistas y Administradores
-                .requestMatchers("/citas/**", "/api/citas/**").hasAnyRole("ADMINISTRADOR", "RECEPCIONISTA")
+                // Módulo Citas permitido para Recepcionistas, Médicos y Administradores
+                .requestMatchers("/citas/**", "/api/citas/**").hasAnyRole("ADMINISTRADOR", "RECEPCIONISTA", "MEDICO")
+                
+                // Módulo Horarios permitido para Médicos y Administradores
+                .requestMatchers("/horarios/**", "/api/horarios/**").hasAnyRole("ADMINISTRADOR", "MEDICO")
                 
                 // Módulo Pacientes permitido para Recepcionistas, Médicos y Administradores
                 .requestMatchers("/pacientes/**", "/api/pacientes/**").hasAnyRole("ADMINISTRADOR", "RECEPCIONISTA", "MEDICO")

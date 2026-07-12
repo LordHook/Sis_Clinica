@@ -114,14 +114,15 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1.5">Especialidad</label>
-                                <select id="especialidad-select" class="wire-input">
+                                <select id="especialidad-select" class="wire-input" onchange="cargarMedicosPorEspecialidad()">
+                                    <option value="">Seleccione especialidad...</option>
                                     <option th:each="e : ${especialidades}" th:value="${e.idEspecialidad}" th:text="${e.nombre}"></option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1.5">Médico</label>
-                                <select id="medico-select" class="wire-input">
-                                    <option th:each="m : ${medicos}" th:value="${m.idUsuario}" th:text="${m.nombres + ' ' + m.apellidos}"></option>
+                                <select id="medico-select" class="wire-input" disabled>
+                                    <option value="">Primero seleccione especialidad...</option>
                                 </select>
                             </div>
                         </div>
@@ -213,6 +214,45 @@
                     const partes = inputFecha.split('-');
                     document.getElementById('fecha-display').innerText = `${partes[2]}/${partes[1]}/${partes[0]}`;
                 }
+            }
+
+            /**
+             * Carga dinámicamente los médicos según la especialidad seleccionada
+             */
+            function cargarMedicosPorEspecialidad() {
+                const idEspecialidad = document.getElementById('especialidad-select').value;
+                const medicoSelect = document.getElementById('medico-select');
+
+                // Limpiar el select de médicos
+                medicoSelect.innerHTML = '<option value="">Cargando médicos...</option>';
+                medicoSelect.disabled = true;
+
+                if (!idEspecialidad) {
+                    medicoSelect.innerHTML = '<option value="">Primero seleccione especialidad...</option>';
+                    return;
+                }
+
+                fetch(`/citas/medicos-por-especialidad?idEspecialidad=${idEspecialidad}`)
+                    .then(response => response.json())
+                    .then(medicos => {
+                        medicoSelect.innerHTML = '';
+                        if (medicos.length === 0) {
+                            medicoSelect.innerHTML = '<option value="">No hay médicos en esta especialidad</option>';
+                        } else {
+                            medicoSelect.innerHTML = '<option value="">Seleccione médico...</option>';
+                            medicos.forEach(m => {
+                                const option = document.createElement('option');
+                                option.value = m.idUsuario;
+                                option.textContent = m.nombres + ' ' + m.apellidos;
+                                medicoSelect.appendChild(option);
+                            });
+                            medicoSelect.disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        medicoSelect.innerHTML = '<option value="">Error al cargar médicos</option>';
+                        console.error('Error:', error);
+                    });
             }
 
             function seleccionarTurno(element, hora) {
