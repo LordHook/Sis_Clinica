@@ -12,6 +12,16 @@
             </button>
         </div>
 
+        <!-- Alertas de Error -->
+        <div th:if="${param.errorEmail}" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg relative mb-6 shadow-sm flex items-center" role="alert">
+            <span class="mr-2 text-xl">⚠️</span>
+            <span class="block sm:inline font-medium">Error al guardar: El nombre de usuario debe ser un correo electrónico válido (debe contener '@').</span>
+        </div>
+        <div th:if="${param.errorInUse}" class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg relative mb-6 shadow-sm flex items-center" role="alert">
+            <span class="mr-2 text-xl">🛑</span>
+            <span class="block sm:inline font-medium">No se puede eliminar el usuario porque tiene registros asociados (citas o historial). Se recomienda <b>desactivarlo</b> cambiando su estado.</span>
+        </div>
+
         <!-- Filter Search Bar -->
         <form th:action="@{/usuarios}" method="get" class="wire-box p-4 mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white shadow-sm border-0">
             <div class="relative col-span-2">

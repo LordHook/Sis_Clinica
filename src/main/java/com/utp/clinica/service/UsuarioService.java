@@ -99,4 +99,21 @@ public class UsuarioService {
     public void eliminar(Integer idUsuario) {
         usuarioRepo.deleteById(idUsuario);
     }
+
+    /**
+     * Permite restablecer la contraseña si el correo y el DNI coinciden (Autoservicio)
+     */
+    @Transactional
+    public boolean restablecerContrasena(String correo, String dni, String nuevaContrasena) {
+        Optional<Usuario> userOpt = usuarioRepo.findByUsuario(correo);
+        if (userOpt.isPresent()) {
+            Usuario u = userOpt.get();
+            if (u.getDni() != null && u.getDni().equals(dni)) {
+                u.setContrasena(passwordEncoder.encode(nuevaContrasena));
+                usuarioRepo.save(u);
+                return true;
+            }
+        }
+        return false;
+    }
 }

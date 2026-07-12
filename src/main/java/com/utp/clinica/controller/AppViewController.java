@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
@@ -65,6 +66,25 @@ public class AppViewController {
         return "login";
     }
 
+    @GetMapping("/recuperar-password")
+    public String mostrarRecuperacion(Model model) {
+        return "recuperar-password";
+    }
+
+    @PostMapping("/recuperar-password")
+    public String procesarRecuperacion(@RequestParam("correo") String correo,
+                                       @RequestParam("dni") String dni,
+                                       @RequestParam("nuevaContrasena") String nuevaContrasena,
+                                       Model model) {
+        boolean exito = usuarioService.restablecerContrasena(correo, dni, nuevaContrasena);
+        if (exito) {
+            return "redirect:/login?recoverySuccess=true";
+        } else {
+            model.addAttribute("error", "Los datos ingresados no coinciden con ningún registro.");
+            return "recuperar-password";
+        }
+    }
+
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         cargarDatosUsuarioEnModelo(model);
@@ -91,6 +111,25 @@ public class AppViewController {
                 .sorted(Comparator.comparing(Cita::getFechaHora))
                 .collect(Collectors.toList());
         model.addAttribute("proximasAtenciones", proximasAtenciones);
+
+        // NUEVAS MÉTRICAS:
+        // 1. Total Pacientes
+        int totalPacientes = pacienteService.listarTodos().size();
+        model.addAttribute("totalPacientes", totalPacientes);
+
+        // 2. Medicamentos con Bajo Stock (< 50)
+        List<Medicamento> bajoStock = farmaciaService.listarMedicamentos().stream()
+                .filter(m -> m.getStock() < 50)
+                .collect(Collectors.toList());
+        model.addAttribute("medicamentosBajoStock", bajoStock);
+
+        // 3. Eficiencia de Citas Atendidas
+        long citasAtendidas = citasHoy.stream()
+                .filter(c -> c.getEstado() == Cita.EstadoCita.ATENDIDA)
+                .count();
+        int eficiencia = citasHoy.isEmpty() ? 0 : (int) Math.round(((double) citasAtendidas / citasHoy.size()) * 100);
+        model.addAttribute("citasAtendidas", citasAtendidas);
+        model.addAttribute("eficienciaCitas", eficiencia);
 
         return "dashboard";
     }

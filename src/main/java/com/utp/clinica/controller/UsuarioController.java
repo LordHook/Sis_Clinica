@@ -34,7 +34,7 @@ public class UsuarioController {
                           @RequestParam(value = "idEspecialidad", required = false) Integer idEspecialidad) {
 
         if (username == null || !username.contains("@")) {
-            return "redirect:/usuarios?error"; // Podría manejarse con un mensaje de error más específico
+            return "redirect:/usuarios?errorEmail=true";
         }
 
         Usuario usuario = new Usuario();
@@ -73,7 +73,11 @@ public class UsuarioController {
      */
     @PostMapping("/eliminar/{idUsuario}")
     public String eliminar(@PathVariable("idUsuario") Integer idUsuario) {
-        usuarioService.eliminar(idUsuario);
-        return "redirect:/usuarios";
+        try {
+            usuarioService.eliminar(idUsuario);
+            return "redirect:/usuarios";
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return "redirect:/usuarios?errorInUse=true";
+        }
     }
 }

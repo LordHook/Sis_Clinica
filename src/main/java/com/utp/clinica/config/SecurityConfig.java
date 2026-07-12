@@ -34,7 +34,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 // Recursos estáticos y pantalla de login públicos
-                .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/login", "/recuperar-password", "/css/**", "/js/**", "/images/**").permitAll()
                 
                 // Módulo Usuarios y Horarios exclusivo de Administradores
                 .requestMatchers("/usuarios/**", "/api/usuarios/**").hasRole("ADMINISTRADOR")

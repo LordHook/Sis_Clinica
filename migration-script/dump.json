@@ -1,0 +1,277 @@
+{
+  "bloqueos_agenda": [],
+  "citas": [
+    {
+      "id_cita": 1,
+      "id_paciente": 1,
+      "id_medico": 1,
+      "id_especialidad": 1,
+      "id_consultorio": 1,
+      "fecha_hora": "2026-06-08T15:00:00.000Z",
+      "estado": "ATENDIDA"
+    }
+  ],
+  "consultas_medicas": [
+    {
+      "id_consulta": 1,
+      "id_cita": 1,
+      "presion_arterial": null,
+      "temperatura": null,
+      "peso_kg": null,
+      "talla_cm": null,
+      "frecuencia_cardiaca": null,
+      "motivo_consulta": "Dolor de cabeza agudo",
+      "diagnostico_cie10": "R51",
+      "evolucion": null,
+      "fecha_registro": "2026-06-08T21:18:31.000Z"
+    }
+  ],
+  "consultorios": [
+    {
+      "id_consultorio": 1,
+      "nombre_numero": "Cons. 101",
+      "piso": "Piso 1"
+    },
+    {
+      "id_consultorio": 2,
+      "nombre_numero": "Cons. 102",
+      "piso": "Piso 1"
+    },
+    {
+      "id_consultorio": 3,
+      "nombre_numero": "Cons. 201",
+      "piso": "Piso 2"
+    },
+    {
+      "id_consultorio": 4,
+      "nombre_numero": "Tópico Urgencias",
+      "piso": "Planta Baja"
+    }
+  ],
+  "especialidades": [
+    {
+      "id_especialidad": 3,
+      "nombre": "Cardiología"
+    },
+    {
+      "id_especialidad": 4,
+      "nombre": "Dermatología"
+    },
+    {
+      "id_especialidad": 1,
+      "nombre": "Medicina General"
+    },
+    {
+      "id_especialidad": 2,
+      "nombre": "Pediatría"
+    }
+  ],
+  "horarios_medicos": [
+    {
+      "id_horario": 1,
+      "dia_semana": "LUNES",
+      "hora_fin": "14:00:00",
+      "hora_inicio": "08:00:00",
+      "id_medico": 2
+    },
+    {
+      "id_horario": 2,
+      "dia_semana": "MIERCOLES",
+      "hora_fin": "14:00:00",
+      "hora_inicio": "08:00:00",
+      "id_medico": 2
+    },
+    {
+      "id_horario": 3,
+      "dia_semana": "VIERNES",
+      "hora_fin": "18:00:00",
+      "hora_inicio": "14:00:00",
+      "id_medico": 2
+    }
+  ],
+  "medicamentos": [
+    {
+      "id_medicamento": 1,
+      "nombre": "Paracetamol 500mg",
+      "stock": 450,
+      "precio": "0.50"
+    },
+    {
+      "id_medicamento": 2,
+      "nombre": "Amoxicilina 500mg",
+      "stock": 100,
+      "precio": "1.20"
+    },
+    {
+      "id_medicamento": 3,
+      "nombre": "Ibuprofeno 400mg",
+      "stock": 200,
+      "precio": "0.30"
+    },
+    {
+      "id_medicamento": 4,
+      "nombre": "Loratadina 10mg",
+      "stock": 50,
+      "precio": "0.80"
+    }
+  ],
+  "pacientes": [
+    {
+      "id_paciente": 1,
+      "numero_historia_clinica": "HC-00001",
+      "dni": "88888888",
+      "nombres": "Carlos",
+      "apellidos": "Mendoza",
+      "fecha_nacimiento": null,
+      "sexo": null,
+      "telefono": "999888777",
+      "direccion": null,
+      "correo": null,
+      "alergias": null,
+      "estado": "ACTIVO",
+      "fecha_registro": "2026-06-08T20:32:54.000Z"
+    },
+    {
+      "id_paciente": 2,
+      "numero_historia_clinica": "HC-00002",
+      "dni": "77777777",
+      "nombres": "María",
+      "apellidos": "Silva",
+      "fecha_nacimiento": null,
+      "sexo": null,
+      "telefono": "999666555",
+      "direccion": null,
+      "correo": null,
+      "alergias": null,
+      "estado": "ACTIVO",
+      "fecha_registro": "2026-06-08T20:32:54.000Z"
+    },
+    {
+      "id_paciente": 3,
+      "numero_historia_clinica": "HC-000003",
+      "dni": "5555555",
+      "nombres": "juan carlos ",
+      "apellidos": "chavez castel",
+      "fecha_nacimiento": "1997-12-31T05:00:00.000Z",
+      "sexo": "M",
+      "telefono": "955823333",
+      "direccion": "av,castilla ",
+      "correo": "",
+      "alergias": "al trabajo ",
+      "estado": "ACTIVO",
+      "fecha_registro": "2026-06-09T00:15:48.000Z"
+    },
+    {
+      "id_paciente": 4,
+      "numero_historia_clinica": "HC-000004",
+      "dni": "73530551",
+      "nombres": "Italo",
+      "apellidos": "Dominguez Cruz",
+      "fecha_nacimiento": "2000-02-02T05:00:00.000Z",
+      "sexo": "M",
+      "telefono": "978796345",
+      "direccion": "Los Alisos 123",
+      "correo": "italodominguez1999@gmail.com",
+      "alergias": "Coco",
+      "estado": "ACTIVO",
+      "fecha_registro": "2026-06-09T02:59:56.000Z"
+    },
+    {
+      "id_paciente": 5,
+      "numero_historia_clinica": "HC-000005",
+      "dni": "741236546",
+      "nombres": "hola",
+      "apellidos": "hol",
+      "fecha_nacimiento": "2026-06-10T05:00:00.000Z",
+      "sexo": "F",
+      "telefono": "4659846",
+      "direccion": "dfd",
+      "correo": "dfd",
+      "alergias": "",
+      "estado": "ACTIVO",
+      "fecha_registro": "2026-06-09T05:21:07.000Z"
+    },
+    {
+      "id_paciente": 7,
+      "numero_historia_clinica": "HC-000006",
+      "dni": "76456273",
+      "nombres": "Alex",
+      "apellidos": "Rodriguez",
+      "fecha_nacimiento": "1972-12-31T05:00:00.000Z",
+      "sexo": "M",
+      "telefono": "987543126",
+      "direccion": "Los Alisos 111",
+      "correo": "alex@gmail.com",
+      "alergias": "Paracetamol",
+      "estado": "INACTIVO",
+      "fecha_registro": "2026-06-09T05:22:53.000Z"
+    }
+  ],
+  "recetas": [
+    {
+      "id_receta": 5,
+      "id_consulta": 1,
+      "id_medicamento": 1,
+      "dosis": "1 tab cada 8h",
+      "frecuencia": "5 días",
+      "cantidad": 15,
+      "estado": "EMITIDA"
+    },
+    {
+      "id_receta": 6,
+      "id_consulta": 1,
+      "id_medicamento": 1,
+      "dosis": "1 tab cada 8h",
+      "frecuencia": "5 días",
+      "cantidad": 15,
+      "estado": "EMITIDA"
+    },
+    {
+      "id_receta": 7,
+      "id_consulta": 1,
+      "id_medicamento": 2,
+      "dosis": "1 tab cada 24h",
+      "frecuencia": "3 días",
+      "cantidad": 3,
+      "estado": "DESPACHADA"
+    }
+  ],
+  "usuarios": [
+    {
+      "id_usuario": 1,
+      "dni": "12345678",
+      "nombres": "Administrador",
+      "apellidos": "Principal",
+      "usuario": "admin",
+      "contrasena": "$2a$10$HUbEf6Qq4vn1WP1Lf2LSLeuTb3icjU3TMsN82/9bBax8yI/JmsgoC",
+      "rol": "ADMINISTRADOR",
+      "estado": 1,
+      "fecha_creacion": "2026-06-08T04:35:14.000Z",
+      "id_especialidad": null
+    },
+    {
+      "id_usuario": 2,
+      "dni": "11111111",
+      "nombres": "Juan",
+      "apellidos": "Pérez",
+      "usuario": "jperez",
+      "contrasena": "$2a$10$Sama0kn4DgA2Dl6SRxbpiuA4fuO/TbdtiQuiGRP7Gl8pOFhahiK4W",
+      "rol": "MEDICO",
+      "estado": 1,
+      "fecha_creacion": "2026-06-08T20:32:46.000Z",
+      "id_especialidad": null
+    },
+    {
+      "id_usuario": 3,
+      "dni": "22222222",
+      "nombres": "Ana",
+      "apellidos": "Gómez",
+      "usuario": "agomez",
+      "contrasena": "$2a$10$VD1JEvmyxCkybrh9QWPy4.LZsmfYiZCZhtPbYvJyavKMkPJY6E6YO",
+      "rol": "MEDICO",
+      "estado": 1,
+      "fecha_creacion": "2026-06-08T20:32:46.000Z",
+      "id_especialidad": null
+    }
+  ]
+}
