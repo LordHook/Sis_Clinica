@@ -3,11 +3,8 @@ package com.utp.clinica.service;
 import com.utp.clinica.model.Paciente;
 import com.utp.clinica.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-<<<<<<< HEAD
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -48,7 +45,6 @@ public class PacienteService {
     }
 
     /**
-<<<<<<< HEAD
      * Igual que buscarPacientes, pero devuelve una página (para el directorio con paginación y orden)
      */
     public Page<Paciente> buscarPacientesPaginado(String query, Pageable pageable) {
@@ -70,8 +66,6 @@ public class PacienteService {
     }
 
     /**
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
      * Registra o actualiza la ficha del paciente. Autogenera el número de HC si es nuevo.
      */
     @Transactional

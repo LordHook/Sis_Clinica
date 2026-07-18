@@ -5,15 +5,9 @@
         <div class="flex justify-between items-center mb-6">
             <div>
                 <h2 class="text-2xl font-bold text-slate-800">Gestión de Citas</h2>
-<<<<<<< HEAD
                 <p class="text-sm text-slate-500 mt-1" th:text="${esVistaMedico} ? 'Tus citas: atendidas anteriores, de hoy y agendadas a futuro' : 'Administración de agenda de pacientes'">Administración de agenda de pacientes</p>
             </div>
             <button th:unless="${esVistaMedico}" onclick="toggleModalCita(true)" class="wire-btn-dark px-5 py-2.5 cursor-pointer">
-=======
-                <p class="text-sm text-slate-500 mt-1">Administración de agenda de pacientes</p>
-            </div>
-            <button onclick="toggleModalCita(true)" class="wire-btn-dark px-5 py-2.5 cursor-pointer">
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                 + AGENDAR NUEVA CITA
             </button>
         </div>
@@ -79,7 +73,6 @@
                                 <form th:if="${cita.estado.name() == 'PROGRAMADA' || cita.estado.name() == 'CONFIRMADA'}" th:action="@{/citas/cancelar/{id}(id=${cita.idCita})}" method="post">
                                     <button type="submit" class="text-red-500 hover:text-red-700 border-0 bg-transparent cursor-pointer font-bold">Cancelar</button>
                                 </form>
-<<<<<<< HEAD
                                 <!-- Botón "Atender Consulta": SOLO visible para el médico asignado a esta cita -->
                                 <a th:if="${idUsuarioActual != null && cita.medico.idUsuario == idUsuarioActual && (cita.estado.name() == 'PROGRAMADA' || cita.estado.name() == 'CONFIRMADA')}"
                                    th:href="@{/medico/consulta/{id}(id=${cita.idCita})}"
@@ -92,9 +85,6 @@
                                    Ver Consulta
                                 </a>
                                 <span th:if="${cita.estado.name() == 'ATENDIDA' && (idUsuarioActual == null || cita.medico.idUsuario != idUsuarioActual)}" class="text-slate-400 italic">Atendida</span>
-=======
-                                <span th:if="${cita.estado.name() == 'ATENDIDA'}" class="text-slate-400 italic">Atendida</span>
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                                 <span th:if="${cita.estado.name() == 'CANCELADA'}" class="text-slate-400 italic">Cancelada</span>
                             </div>
                         </td>
@@ -142,11 +132,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1.5">Médico</label>
-<<<<<<< HEAD
                                 <select id="medico-select" class="wire-input" disabled onchange="cargarTurnosDisponibles()">
-=======
-                                <select id="medico-select" class="wire-input" disabled>
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                                     <option value="">Primero seleccione especialidad...</option>
                                 </select>
                             </div>
@@ -161,11 +147,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1.5">Día de la Cita</label>
-<<<<<<< HEAD
                                 <input type="date" id="fecha-cita" class="wire-input text-slate-600" onchange="actualizarFechaDisplay(); cargarTurnosDisponibles();">
-=======
-                                <input type="date" id="fecha-cita" class="wire-input text-slate-600" value="2026-06-12" onchange="actualizarFechaDisplay()">
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                             </div>
                         </div>
                     </div>
@@ -177,7 +159,6 @@
                             <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded" id="fecha-display">12/06/2026</span>
                         </div>
 
-<<<<<<< HEAD
                         <!-- Mensaje de ayuda / estado (sin médico, sin horario, bloqueo, etc.) -->
                         <div id="turnos-mensaje" class="text-xs text-slate-500 italic bg-slate-50 border border-slate-200 rounded-lg p-4 text-center">
                             Seleccione un médico y una fecha para ver los turnos disponibles.
@@ -193,42 +174,6 @@
                                 <span class="text-blue-400">🕒</span>
                             </div>
                             <input type="hidden" id="hora-confirmada-valor" value="">
-=======
-                        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3" id="contenedor-turnos">
-                            <button type="button" onclick="seleccionarTurno(this, '08:00')" class="turno-btn border border-green-300 bg-white hover:bg-green-50 text-green-600 py-3 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer">
-                                <span class="font-bold text-[14px]">08:00 AM</span>
-                                <span class="text-[9px] font-bold mt-1 uppercase">Libre</span>
-                            </button>
-                            <button type="button" onclick="seleccionarTurno(this, '08:30')" class="turno-btn border border-green-300 bg-white hover:bg-green-50 text-green-600 py-3 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer">
-                                <span class="font-bold text-[14px]">08:30 AM</span>
-                                <span class="text-[9px] font-bold mt-1 uppercase">Libre</span>
-                            </button>
-                            <button type="button" onclick="seleccionarTurno(this, '09:00')" class="turno-btn border-2 border-green-500 bg-green-50 text-green-700 py-3 rounded-xl flex flex-col items-center justify-center transition-all shadow-sm cursor-pointer">
-                                <span class="font-black text-[14px]">09:00 AM</span>
-                                <span class="text-[9px] font-bold mt-1 uppercase">Seleccionado</span>
-                            </button>
-                            <button type="button" onclick="seleccionarTurno(this, '09:30')" class="turno-btn border border-green-300 bg-white hover:bg-green-50 text-green-600 py-3 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer">
-                                <span class="font-bold text-[14px]">09:30 AM</span>
-                                <span class="text-[9px] font-bold mt-1 uppercase">Libre</span>
-                            </button>
-                            <button type="button" onclick="seleccionarTurno(this, '10:00')" class="turno-btn border border-green-300 bg-white hover:bg-green-50 text-green-600 py-3 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer">
-                                <span class="font-bold text-[14px]">10:00 AM</span>
-                                <span class="text-[9px] font-bold mt-1 uppercase">Libre</span>
-                            </button>
-                            <button type="button" onclick="seleccionarTurno(this, '10:30')" class="turno-btn border border-green-300 bg-white hover:bg-green-50 text-green-600 py-3 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer">
-                                <span class="font-bold text-[14px]">10:30 AM</span>
-                                <span class="text-[9px] font-bold mt-1 uppercase">Libre</span>
-                            </button>
-                        </div>
-
-                        <div class="mt-auto bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex justify-between items-center">
-                            <span class="font-semibold text-blue-800 text-sm">Confirmar Hora:</span>
-                            <div class="flex items-center space-x-2 bg-white border border-blue-200 px-4 py-1.5 rounded-lg shadow-sm">
-                                <span id="hora-confirmada-texto" class="font-black text-blue-700 text-lg">09:00</span>
-                                <span class="text-blue-400">🕒</span>
-                            </div>
-                            <input type="hidden" id="hora-confirmada-valor" value="09:00">
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                         </div>
                     </div>
                 </div>
@@ -248,7 +193,6 @@
             function toggleModalCita(show) {
                 const modal = document.getElementById('modal-nueva-cita');
                 if (show) {
-<<<<<<< HEAD
                     // Por defecto la fecha es hoy y no se permite agendar en el pasado
                     const inputFecha = document.getElementById('fecha-cita');
                     const hoy = new Date().toISOString().split('T')[0];
@@ -257,16 +201,11 @@
                     modal.classList.remove('hidden-view');
                     actualizarFechaDisplay();
                     cargarTurnosDisponibles();
-=======
-                    modal.classList.remove('hidden-view');
-                    actualizarFechaDisplay();
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                 } else {
                     modal.classList.add('hidden-view');
                 }
             }
 
-<<<<<<< HEAD
             /**
              * Consulta al servidor los turnos de 30 min del médico para la fecha elegida
              * y los pinta marcando los libres y los ya reservados (ocupados).
@@ -326,33 +265,6 @@
                     });
             }
 
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
-            function actualizarFechaDisplay() {
-                const inputFecha = document.getElementById('fecha-cita').value;
-                if (inputFecha) {
-                    const partes = inputFecha.split('-');
-                    document.getElementById('fecha-display').innerText = `${partes[2]}/${partes[1]}/${partes[0]}`;
-                }
-            }
-
-            /**
-             * Carga dinámicamente los médicos según la especialidad seleccionada
-             */
-            function cargarMedicosPorEspecialidad() {
-                const idEspecialidad = document.getElementById('especialidad-select').value;
-                const medicoSelect = document.getElementById('medico-select');
-
-                // Limpiar el select de médicos
-                medicoSelect.innerHTML = '<option value="">Cargando médicos...</option>';
-                medicoSelect.disabled = true;
-
-                if (!idEspecialidad) {
-                    medicoSelect.innerHTML = '<option value="">Primero seleccione especialidad...</option>';
-<<<<<<< HEAD
-                    cargarTurnosDisponibles();
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                     return;
                 }
 
@@ -372,42 +284,17 @@
                             });
                             medicoSelect.disabled = false;
                         }
-<<<<<<< HEAD
                         // Al cambiar de especialidad se limpia el médico, por lo que se reinician los turnos
                         cargarTurnosDisponibles();
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
-                    })
-                    .catch(error => {
-                        medicoSelect.innerHTML = '<option value="">Error al cargar médicos</option>';
-                        console.error('Error:', error);
-                    });
-            }
-
-            function seleccionarTurno(element, hora) {
-<<<<<<< HEAD
-                // Restablecer solo los turnos libres (no tocar los ocupados/deshabilitados)
-                document.querySelectorAll('.turno-btn:not([disabled])').forEach(btn => {
-=======
-                document.querySelectorAll('.turno-btn').forEach(btn => {
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                     btn.className = "turno-btn border border-green-300 bg-white hover:bg-green-50 text-green-600 py-3 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer";
                     const spanLabel = btn.querySelector('span:last-child');
                     if (spanLabel) spanLabel.innerText = "Libre";
                 });
-<<<<<<< HEAD
 
                 element.className = "turno-btn border-2 border-green-500 bg-green-50 text-green-700 py-3 rounded-xl flex flex-col items-center justify-center transition-all shadow-sm cursor-pointer";
                 const spanLabel = element.querySelector('span:last-child');
                 if (spanLabel) spanLabel.innerText = "Seleccionado";
 
-=======
-                
-                element.className = "turno-btn border-2 border-green-500 bg-green-50 text-green-700 py-3 rounded-xl flex flex-col items-center justify-center transition-all shadow-sm cursor-pointer";
-                const spanLabel = element.querySelector('span:last-child');
-                if (spanLabel) spanLabel.innerText = "Seleccionado";
-                
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                 document.getElementById('hora-confirmada-texto').innerText = hora;
                 document.getElementById('hora-confirmada-valor').value = hora;
             }

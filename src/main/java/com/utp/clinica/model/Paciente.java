@@ -3,10 +3,7 @@ package com.utp.clinica.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-<<<<<<< HEAD
 import java.time.Period;
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 
 /**
  * Entidad que representa la ficha médica y datos personales de un paciente
@@ -113,7 +110,6 @@ public class Paciente {
 
     public LocalDateTime getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(LocalDateTime fechaRegistro) { this.fechaRegistro = fechaRegistro; }
-<<<<<<< HEAD
 
     /**
      * Edad calculada al vuelo a partir de la fecha de nacimiento.
@@ -126,6 +122,4 @@ public class Paciente {
         }
         return Period.between(fechaNacimiento, LocalDate.now()).getYears();
     }
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 }

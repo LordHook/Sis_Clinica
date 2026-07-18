@@ -224,11 +224,7 @@
                     
                     <div class="space-y-3">
                         <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
-<<<<<<< HEAD
                             <input type="checkbox" id="perm-dashboard" value="dashboard" class="w-4 h-4 text-blue-600 rounded mr-3">
-=======
-                            <input type="checkbox" id="perm-dashboard" value="dashboard" class="w-4 h-4 text-blue-600 rounded mr-3" checked disabled>
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                             <span class="mr-2 text-lg">📊</span>
                             <div>
                                 <span class="font-semibold text-sm text-slate-800">Dashboard</span>
@@ -264,7 +260,6 @@
                         </label>
                         
                         <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
-<<<<<<< HEAD
                             <input type="checkbox" id="perm-inventario" value="inventario" class="w-4 h-4 text-blue-600 rounded mr-3">
                             <span class="mr-2 text-lg">📦</span>
                             <div>
@@ -274,174 +269,6 @@
                         </label>
                         
                         <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
-                            <input type="checkbox" id="perm-horarios" value="horarios" class="w-4 h-4 text-blue-600 rounded mr-3">
-                            <span class="mr-2 text-lg">⏰</span>
-                            <div>
-                                <span class="font-semibold text-sm text-slate-800">Gestión Horarios</span>
-                                <p class="text-xs text-slate-400">Horarios y bloqueos de agenda</p>
-                            </div>
-                        </label>
-                        
-                        <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
-                            <input type="checkbox" id="perm-usuarios" value="usuarios" class="w-4 h-4 text-blue-600 rounded mr-3">
-                            <span class="mr-2 text-lg">🛡️</span>
-                            <div>
-                                <span class="font-semibold text-sm text-slate-800">Gestión Usuarios</span>
-                                <p class="text-xs text-slate-400">Administración de personal</p>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="p-5 border-t border-slate-100 flex justify-end space-x-3 bg-white">
-                    <button type="button" onclick="cerrarModalPermisos()" class="wire-btn px-5 py-2.5 cursor-pointer">Cancelar</button>
-                    <button type="button" onclick="guardarPermisos()" class="px-6 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-sm shadow-md transition-colors cursor-pointer">
-                        Guardar Permisos
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            // ========== MODAL USUARIO ==========
-            function toggleModalUsuario(show) {
-                const modal = document.getElementById('modal-usuario');
-                if (show) {
-                    modal.classList.remove('hidden-view');
-                } else {
-                    modal.classList.add('hidden-view');
-                    limpiarFormularioUser();
-                }
-            }
-
-            function toggleEspecialidad() {
-                const select = document.getElementById('user-role-select');
-                const campoEspecialidad = document.getElementById('campo-especialidad');
-                const selectEsp = document.getElementById('form-user-especialidad');
-                
-                if (select.value === 'MEDICO') {
-                    campoEspecialidad.classList.remove('hidden-view');
-                    selectEsp.setAttribute('required', 'required');
-                } else {
-                    campoEspecialidad.classList.add('hidden-view');
-                    selectEsp.removeAttribute('required');
-                    selectEsp.value = '';
-                }
-            }
-
-            /**
-             * Actualiza el campo hidden de email con el prefijo + @clinica.pe
-             */
-            function actualizarCorreoUsuario() {
-                const prefix = document.getElementById('form-user-username-prefix').value.trim();
-                const fullEmail = prefix ? prefix + '@clinica.pe' : '';
-                document.getElementById('form-user-hidden-email').value = fullEmail;
-                document.getElementById('preview-email').innerText = fullEmail ? 'Vista previa: ' + fullEmail : 'Vista previa: —';
-            }
-
-            function editUsuario(btn) {
-                const id = btn.getAttribute('data-id');
-                const dni = btn.getAttribute('data-dni');
-                const rol = btn.getAttribute('data-rol');
-                const nombres = btn.getAttribute('data-nombres');
-                const apellidos = btn.getAttribute('data-apellidos');
-                const usuario = btn.getAttribute('data-usuario');
-                const idEspecialidad = btn.getAttribute('data-especialidad');
-
-                document.getElementById('edit-id-usuario').value = id;
-                document.getElementById('form-user-dni').value = dni;
-                document.getElementById('user-role-select').value = rol;
-                document.getElementById('form-user-nombres').value = nombres;
-                document.getElementById('form-user-apellidos').value = apellidos;
-                
-                // Extraer el prefijo del correo (antes de @clinica.pe)
-                const emailParts = usuario.split('@');
-                document.getElementById('form-user-username-prefix').value = emailParts[0] || '';
-                document.getElementById('form-user-hidden-email').value = usuario;
-                document.getElementById('preview-email').innerText = 'Vista previa: ' + usuario;
-                
-                // For editing, password is not strictly required if keeping old password
-                document.getElementById('form-user-pass').removeAttribute('required');
-                document.getElementById('form-user-pass-confirm').removeAttribute('required');
-                document.getElementById('pass-label').innerText = "Nueva Contraseña (Opcional)";
-                document.getElementById('confirm-pass-label').innerText = "Confirmar Contraseña (Opcional)";
-                
-                if (idEspecialidad) {
-                    document.getElementById('form-user-especialidad').value = idEspecialidad;
-                } else {
-                    document.getElementById('form-user-especialidad').value = '';
-                }
-                
-                toggleEspecialidad();
-                document.getElementById('modal-user-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Editar Personal: ${usuario}`;
-                toggleModalUsuario(true);
-            }
-
-            function limpiarFormularioUser() {
-                document.getElementById('edit-id-usuario').value = '';
-                document.getElementById('form-user-dni').value = '';
-                document.getElementById('user-role-select').value = 'ADMINISTRADOR';
-                document.getElementById('form-user-nombres').value = '';
-                document.getElementById('form-user-apellidos').value = '';
-                document.getElementById('form-user-username-prefix').value = '';
-                document.getElementById('form-user-hidden-email').value = '';
-                document.getElementById('preview-email').innerText = 'Vista previa: —';
-                document.getElementById('form-user-pass').value = '';
-                document.getElementById('form-user-pass-confirm').value = '';
-                document.getElementById('form-user-especialidad').value = '';
-
-                document.getElementById('form-user-pass').setAttribute('required', 'required');
-                document.getElementById('form-user-pass-confirm').setAttribute('required', 'required');
-                document.getElementById('pass-label').innerText = "Contraseña temporal";
-                document.getElementById('confirm-pass-label').innerText = "Confirmar Contraseña";
-
-                toggleEspecialidad();
-                document.getElementById('modal-user-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Registrar Personal / Usuario`;
-            }
-
-            function validarFormulario() {
-                // Asegurar que el correo se haya generado
-                actualizarCorreoUsuario();
-                const email = document.getElementById('form-user-hidden-email').value;
-                if (!email || !email.includes('@')) {
-                    alert("Debe ingresar un identificador de usuario válido.");
-                    return false;
-                }
-
-                const pass = document.getElementById('form-user-pass').value;
-                const confirmPass = document.getElementById('form-user-pass-confirm').value;
-                
-                if (pass && pass !== confirmPass) {
-                    alert("Las contraseñas no coinciden.");
-                    return false;
-                }
-                return true;
-            }
-
-            // ========== MODAL PERMISOS ==========
-            function abrirModalPermisos(btn) {
-                const idUsuario = btn.getAttribute('data-id');
-                const nombreCompleto = btn.getAttribute('data-nombrecompleto');
-                
-                document.getElementById('permisos-user-id').value = idUsuario;
-                document.getElementById('modal-permisos-title').innerHTML = `<span class="bg-purple-100 text-purple-600 p-1.5 rounded-lg mr-2 text-sm">🛡️</span> Permisos: ${nombreCompleto}`;
-                
-                // Resetear todos los checkboxes
-<<<<<<< HEAD
-                const checkboxes = ['perm-dashboard', 'perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-inventario', 'perm-horarios', 'perm-usuarios'];
-                checkboxes.forEach(id => {
-                    document.getElementById(id).checked = false;
-                });
-=======
-                const checkboxes = ['perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-horarios', 'perm-usuarios'];
-                checkboxes.forEach(id => {
-                    document.getElementById(id).checked = false;
-                });
-                // Dashboard siempre activo
-                document.getElementById('perm-dashboard').checked = true;
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 
                 // Cargar permisos actuales del usuario
                 fetch(`/usuarios/permisos/${idUsuario}`)
@@ -468,15 +295,9 @@
 
             function guardarPermisos() {
                 const idUsuario = document.getElementById('permisos-user-id').value;
-<<<<<<< HEAD
                 const modulos = [];
                 
                 const checkboxes = ['perm-dashboard', 'perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-inventario', 'perm-horarios', 'perm-usuarios'];
-=======
-                const modulos = ['dashboard']; // Dashboard siempre incluido
-                
-                const checkboxes = ['perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-horarios', 'perm-usuarios'];
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                 checkboxes.forEach(id => {
                     const checkbox = document.getElementById(id);
                     if (checkbox.checked) {

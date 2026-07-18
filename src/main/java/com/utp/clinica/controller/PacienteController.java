@@ -2,7 +2,6 @@ package com.utp.clinica.controller;
 
 import com.utp.clinica.model.Paciente;
 import com.utp.clinica.service.PacienteService;
-<<<<<<< HEAD
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,12 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-=======
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import java.time.LocalDate;
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 
 /**
  * Controlador encargado de procesar las peticiones y altas de pacientes
@@ -35,16 +28,12 @@ public class PacienteController {
     @Autowired
     private PacienteService pacienteService;
 
-<<<<<<< HEAD
     // DNI: solo números, entre 8 y 9 dígitos
     private static final Pattern PATRON_DNI = Pattern.compile("^\\d{8,9}$");
     // Teléfono: solo números, exactamente 9 dígitos
     private static final Pattern PATRON_TELEFONO = Pattern.compile("^\\d{9}$");
     // Nombres/Apellidos: solo letras (incluye tildes y Ñ) y espacios, sin números ni símbolos
     private static final Pattern PATRON_SOLO_LETRAS = Pattern.compile("^[A-ZÑÁÉÍÓÚÜ ]+$");
-
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
     /**
      * Guarda o actualiza un expediente de paciente (desde Formulario HTML)
      */
@@ -58,7 +47,6 @@ public class PacienteController {
                           @RequestParam("telefono") String telefono,
                           @RequestParam("direccion") String direccion,
                           @RequestParam(value = "correo", required = false) String correo,
-<<<<<<< HEAD
                           @RequestParam(value = "alergias", required = false) String alergias,
                           RedirectAttributes redirectAttributes) {
 
@@ -87,11 +75,6 @@ public class PacienteController {
             redirectAttributes.addFlashAttribute("mensajeError", "El apellido solo debe contener letras en mayúscula, sin números.");
             return "redirect:/pacientes";
         }
-
-=======
-                          @RequestParam(value = "alergias", required = false) String alergias) {
-        
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
         Paciente paciente = new Paciente();
         if (idPaciente != null) {
             paciente.setIdPaciente(idPaciente);
@@ -108,7 +91,6 @@ public class PacienteController {
         paciente.setCorreo(correo);
         paciente.setAlergias(alergias);
 
-<<<<<<< HEAD
         try {
             pacienteService.guardar(paciente);
         } catch (DataIntegrityViolationException e) {
@@ -217,10 +199,4 @@ public class PacienteController {
         model.addAttribute("totalPacientes", pacientes.size());
         return "pacientes-pdf";
     }
-=======
-        pacienteService.guardar(paciente);
-        
-        return "redirect:/pacientes";
-    }
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 }

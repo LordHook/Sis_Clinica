@@ -39,17 +39,12 @@ public class ConsultaController {
             BigDecimal peso = payload.get("pesoKg") != null ? new BigDecimal(payload.get("pesoKg").toString()) : BigDecimal.ZERO;
             Integer talla = payload.get("tallaCm") != null ? Integer.valueOf(payload.get("tallaCm").toString()) : 0;
             Integer fCard = payload.get("frecuenciaCardiaca") != null ? Integer.valueOf(payload.get("frecuenciaCardiaca").toString()) : 0;
-<<<<<<< HEAD
             if (payload.get("motivoConsulta") == null || payload.get("motivoConsulta").toString().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of("error", "El motivo de la consulta es obligatorio."));
             }
             String motivo = payload.get("motivoConsulta").toString();
             String diag = payload.get("diagnosticoCie10") != null ? payload.get("diagnosticoCie10").toString() : "";
             String tratamiento = payload.get("tratamiento") != null ? payload.get("tratamiento").toString() : "";
-=======
-            String motivo = payload.get("motivoConsulta").toString();
-            String diag = payload.get("diagnosticoCie10") != null ? payload.get("diagnosticoCie10").toString() : "";
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
             String evolucion = payload.get("evolucion") != null ? payload.get("evolucion").toString() : "";
 
             Cita cita = citaService.buscarPorId(idCita)
@@ -64,10 +59,7 @@ public class ConsultaController {
             consulta.setFrecuenciaCardiaca(fCard);
             consulta.setMotivoConsulta(motivo);
             consulta.setDiagnosticoCie10(diag);
-<<<<<<< HEAD
             consulta.setTratamiento(tratamiento);
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
             consulta.setEvolucion(evolucion);
 
             // Procesar las recetas

@@ -6,16 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-<<<<<<< HEAD
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-=======
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,20 +25,14 @@ public class CitaController {
     @Autowired private CitaService citaService;
     @Autowired private PacienteService pacienteService;
     @Autowired private UsuarioService usuarioService;
-<<<<<<< HEAD
     @Autowired private HorarioService horarioService;
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
     @Autowired private com.utp.clinica.repository.EspecialidadRepository especialidadRepo;
     @Autowired private com.utp.clinica.repository.ConsultorioRepository consultorioRepo;
     @Autowired private com.utp.clinica.repository.UsuarioRepository usuarioRepo;
 
-<<<<<<< HEAD
     /** Duración estándar de cada turno de atención, en minutos */
     private static final int DURACION_TURNO_MINUTOS = 30;
 
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
     /**
      * Endpoint REST para obtener los médicos de una especialidad determinada
      * Usado por el JavaScript del modal de citas para filtrar dinámicamente
@@ -64,7 +53,6 @@ public class CitaController {
     }
 
     /**
-<<<<<<< HEAD
      * Endpoint REST que devuelve los turnos de 30 minutos de un médico para una fecha,
      * marcando cuáles están LIBRE y cuáles OCUPADO (ya reservados). Alimenta el paso 2
      * del modal de agendamiento para que refleje el horario real del médico y las reservas.
@@ -149,8 +137,6 @@ public class CitaController {
     }
 
     /**
-=======
->>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
      * Agendar una nueva cita (llamada AJAX/REST)
      */
     @PostMapping("/agendar")
