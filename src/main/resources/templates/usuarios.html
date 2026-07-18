@@ -138,7 +138,11 @@
                         <div class="grid grid-cols-2 gap-5">
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-slate-700">Documento de Identidad (DNI)</label>
-                                <input type="text" name="dni" id="form-user-dni" class="wire-input" placeholder="Ej. 74839201" required />
+                                <input type="text" name="dni" id="form-user-dni" class="wire-input" placeholder="Ej. 74839201"
+                                       inputmode="numeric" pattern="\d{8}" minlength="8" maxlength="8"
+                                       title="El DNI debe tener exactamente 8 dígitos numéricos"
+                                       oninput="this.value = this.value.replace(/\D/g, '').slice(0, 8)"
+                                       required />
                             </div>
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-blue-700">Rol en el Sistema</label>
@@ -163,11 +167,19 @@
                         <div class="grid grid-cols-2 gap-5">
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nombres Completos</label>
-                                <input type="text" name="nombres" id="form-user-nombres" class="wire-input" required />
+                                <input type="text" name="nombres" id="form-user-nombres" class="wire-input uppercase"
+                                       pattern="[A-ZÑÁÉÍÓÚÜ ]+" maxlength="100"
+                                       title="Solo se permiten letras en mayúscula"
+                                       oninput="this.value = this.value.toUpperCase().replace(/[^A-ZÑÁÉÍÓÚÜ ]/g, '')"
+                                       required />
                             </div>
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-slate-700">Apellidos</label>
-                                <input type="text" name="apellidos" id="form-user-apellidos" class="wire-input" required />
+                                <input type="text" name="apellidos" id="form-user-apellidos" class="wire-input uppercase"
+                                       pattern="[A-ZÑÁÉÍÓÚÜ ]+" maxlength="100"
+                                       title="Solo se permiten letras en mayúscula"
+                                       oninput="this.value = this.value.toUpperCase().replace(/[^A-ZÑÁÉÍÓÚÜ ]/g, '')"
+                                       required />
                             </div>
                         </div>
 
@@ -179,8 +191,10 @@
                                     <div class="flex items-stretch">
                                         <input type="text" id="form-user-username-prefix" 
                                                placeholder="Ej. jperez" 
-                                               class="wire-input font-mono bg-slate-50 rounded-r-none border-r-0 flex-1" 
-                                               oninput="actualizarCorreoUsuario()" 
+                                               class="wire-input font-mono bg-slate-50 rounded-r-none border-r-0 flex-1 lowercase" 
+                                               pattern="[a-z0-9]+" maxlength="20"
+                                               title="Solo letras minúsculas y números, sin espacios"
+                                               oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, ''); actualizarCorreoUsuario();" 
                                                required />
                                         <span class="inline-flex items-center px-4 bg-blue-600 text-white font-semibold text-sm rounded-r-lg border border-blue-600 whitespace-nowrap">@clinica.pe</span>
                                     </div>
@@ -190,11 +204,11 @@
                             <div class="grid grid-cols-2 gap-5">
                                 <div>
                                     <label class="block font-semibold text-sm mb-1.5 text-slate-700" id="pass-label">Contraseña</label>
-                                    <input type="password" name="contrasena" id="form-user-pass" class="wire-input" placeholder="••••••••" required />
+                                    <input type="password" name="contrasena" id="form-user-pass" class="wire-input" placeholder="••••••••" minlength="8" required />
                                 </div>
                                 <div>
                                     <label class="block font-semibold text-sm mb-1.5 text-slate-700" id="confirm-pass-label">Confirmar Contraseña</label>
-                                    <input type="password" id="form-user-pass-confirm" class="wire-input" placeholder="••••••••" required />
+                                    <input type="password" id="form-user-pass-confirm" class="wire-input" placeholder="••••••••" minlength="8" required />
                                 </div>
                             </div>
                         </div>

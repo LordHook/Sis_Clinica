@@ -78,7 +78,7 @@
                             <span class="mr-2">🚫</span> Bloqueos Excepcionales <span class="normal-case text-xs font-normal text-slate-500 ml-2">(Vacaciones, Feriados)</span>
                         </h3>
                         
-                        <form th:action="@{/horarios/bloquear}" method="post" class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-100 mb-4">
+                        <form th:action="@{/horarios/bloquear}" method="post" onsubmit="return validarBloqueo(this)" class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-100 mb-4">
                             <input type="hidden" name="medicoId" th:value="${medicoId}" />
                             <div>
                                 <label class="block text-xs font-semibold mb-1 text-slate-600">Fecha Inicio</label>
@@ -133,7 +133,7 @@
         <!-- Add Turn Modal -->
         <div id="modal-turno" class="hidden-view fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
             <div class="wire-box w-full max-w-md flex flex-col border-0 shadow-2xl overflow-hidden rounded-2xl bg-white">
-                <form th:action="@{/horarios/guardar}" method="post">
+                <form th:action="@{/horarios/guardar}" method="post" onsubmit="return validarTurno(this)">
                     <input type="hidden" name="medicoId" th:value="${medicoId}" />
                     
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
@@ -191,6 +191,26 @@
                 } else {
                     modal.classList.add('hidden-view');
                 }
+            }
+
+            function validarTurno(form) {
+                const inicio = form.querySelector('input[name="horaInicio"]').value;
+                const fin = form.querySelector('input[name="horaFin"]').value;
+                if (inicio >= fin) {
+                    alert('La hora de término debe ser posterior a la hora de inicio.');
+                    return false;
+                }
+                return true;
+            }
+
+            function validarBloqueo(form) {
+                const inicio = form.querySelector('input[name="fechaInicio"]').value;
+                const fin = form.querySelector('input[name="fechaFin"]').value;
+                if (inicio > fin) {
+                    alert('La fecha de fin no puede ser anterior a la fecha de inicio.');
+                    return false;
+                }
+                return true;
             }
         </script>
     </section>

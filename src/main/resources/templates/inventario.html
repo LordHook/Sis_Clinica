@@ -94,17 +94,19 @@
                     <div class="p-6 space-y-5 bg-slate-50">
                         <div>
                             <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nombre del Medicamento <span class="text-red-500">*</span></label>
-                            <input type="text" name="nombre" id="form-nombre" class="wire-input" required />
+                            <input type="text" name="nombre" id="form-nombre" class="wire-input" maxlength="100" 
+                                   oninput="this.value = this.value.replace(/^\s+/g, '')" required />
                         </div>
                         
                         <div class="grid grid-cols-2 gap-5">
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-slate-700">Stock Inicial / Actual <span class="text-red-500">*</span></label>
-                                <input type="number" name="stock" id="form-stock" class="wire-input font-mono" min="0" value="0" required />
+                                <input type="number" name="stock" id="form-stock" class="wire-input font-mono" min="0" step="1" value="0" 
+                                       oninput="this.value = this.value.replace(/\D/g, '')" required />
                             </div>
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-slate-700">Precio (S/) <span class="text-red-500">*</span></label>
-                                <input type="number" step="0.01" name="precio" id="form-precio" class="wire-input font-mono" min="0" value="0.00" required />
+                                <input type="number" step="0.01" name="precio" id="form-precio" class="wire-input font-mono" min="0.01" value="0.00" required />
                             </div>
                         </div>
                     </div>
