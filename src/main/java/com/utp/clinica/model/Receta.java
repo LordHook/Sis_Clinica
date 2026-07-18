@@ -1,7 +1,10 @@
 package com.utp.clinica.model;
 
 import jakarta.persistence.*;
+<<<<<<< HEAD
 import java.time.LocalDateTime;
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 
 /**
  * Entidad que representa la receta de un medicamento emitida en una consulta médica
@@ -36,11 +39,14 @@ public class Receta {
     @Enumerated(EnumType.STRING)
     private EstadoReceta estado = EstadoReceta.EMITIDA;
 
+<<<<<<< HEAD
     // Fecha y hora en que el farmacéutico despachó la receta (null mientras esté EMITIDA).
     // Permite construir el historial de despachos agrupado por día.
     @Column(name = "fecha_despacho")
     private LocalDateTime fechaDespacho;
 
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
     public enum EstadoReceta {
         EMITIDA,
         DESPACHADA
@@ -67,7 +73,10 @@ public class Receta {
 
     public EstadoReceta getEstado() { return estado; }
     public void setEstado(EstadoReceta estado) { this.estado = estado; }
+<<<<<<< HEAD
 
     public LocalDateTime getFechaDespacho() { return fechaDespacho; }
     public void setFechaDespacho(LocalDateTime fechaDespacho) { this.fechaDespacho = fechaDespacho; }
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 }

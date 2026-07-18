@@ -134,7 +134,11 @@ public class DatabaseInitializer implements CommandLineRunner {
             // Sembrar permisos por defecto para cada usuario
             sembrarPermisosDefecto(admin, Arrays.asList("dashboard", "citas", "pacientes", "farmacia", "horarios", "usuarios"));
             sembrarPermisosDefecto(recep, Arrays.asList("dashboard", "citas", "pacientes"));
+<<<<<<< HEAD
             sembrarPermisosDefecto(medico, Arrays.asList("citas"));
+=======
+            sembrarPermisosDefecto(medico, Arrays.asList("dashboard", "citas", "pacientes", "horarios"));
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
             sembrarPermisosDefecto(farma, Arrays.asList("dashboard", "farmacia"));
             System.out.println("[DB INIT] Permisos por defecto asignados.");
         }

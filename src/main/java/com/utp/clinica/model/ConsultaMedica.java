@@ -38,6 +38,7 @@ public class ConsultaMedica {
     @Column(name = "motivo_consulta", nullable = false, columnDefinition = "TEXT")
     private String motivoConsulta;
 
+<<<<<<< HEAD
     // NOTA: se amplía a texto libre (antes limitado a 10 caracteres para código CIE-10).
     // Aquí se usa como el campo "Diagnóstico" que redacta el médico.
     @Column(name = "diagnostico_cie10", columnDefinition = "TEXT")
@@ -47,6 +48,11 @@ public class ConsultaMedica {
     @Column(columnDefinition = "TEXT")
     private String tratamiento;
 
+=======
+    @Column(name = "diagnostico_cie10", length = 10)
+    private String diagnosticoCie10;
+
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
     @Column(columnDefinition = "TEXT")
     private String evolucion;
 
@@ -86,9 +92,12 @@ public class ConsultaMedica {
     public String getDiagnosticoCie10() { return diagnosticoCie10; }
     public void setDiagnosticoCie10(String diagnosticoCie10) { this.diagnosticoCie10 = diagnosticoCie10; }
 
+<<<<<<< HEAD
     public String getTratamiento() { return tratamiento; }
     public void setTratamiento(String tratamiento) { this.tratamiento = tratamiento; }
 
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
     public String getEvolucion() { return evolucion; }
     public void setEvolucion(String evolucion) { this.evolucion = evolucion; }
 

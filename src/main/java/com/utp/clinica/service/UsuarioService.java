@@ -166,6 +166,7 @@ public class UsuarioService {
     public List<String> obtenerPermisosDefecto(Usuario.Rol rol) {
         switch (rol) {
             case ADMINISTRADOR:
+<<<<<<< HEAD
                 return Arrays.asList("dashboard", "citas", "pacientes", "farmacia", "horarios", "usuarios", "inventario");
             case RECEPCIONISTA:
                 return Arrays.asList("dashboard", "citas", "pacientes", "horarios");
@@ -173,6 +174,15 @@ public class UsuarioService {
                 return Arrays.asList("dashboard", "citas", "horarios");
             case FARMACEUTICO:
                 return Arrays.asList("farmacia", "inventario");
+=======
+                return Arrays.asList("dashboard", "citas", "pacientes", "farmacia", "horarios", "usuarios");
+            case RECEPCIONISTA:
+                return Arrays.asList("dashboard", "citas", "pacientes");
+            case MEDICO:
+                return Arrays.asList("dashboard", "citas", "pacientes", "horarios");
+            case FARMACEUTICO:
+                return Arrays.asList("dashboard", "farmacia");
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
             default:
                 return Arrays.asList("dashboard");
         }

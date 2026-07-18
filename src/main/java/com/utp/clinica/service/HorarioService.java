@@ -8,9 +8,13 @@ import com.utp.clinica.repository.HorarioMedicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+<<<<<<< HEAD
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+=======
+import java.util.List;
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 
 /**
  * Servicio encargado de gestionar la disponibilidad y los bloqueos excepcionales de agenda médica
@@ -39,6 +43,7 @@ public class HorarioService {
     }
 
     /**
+<<<<<<< HEAD
      * Obtiene los turnos fijos de un médico para un día de la semana concreto (ej. LUNES)
      */
     public List<HorarioMedico> obtenerHorarioPorMedicoYDia(Integer idMedico, String diaSemana) {
@@ -60,6 +65,8 @@ public class HorarioService {
     }
 
     /**
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
      * Agrega un nuevo turno semanal fijo para un médico
      */
     @Transactional

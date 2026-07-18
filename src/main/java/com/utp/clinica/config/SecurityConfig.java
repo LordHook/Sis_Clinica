@@ -42,6 +42,7 @@ public class SecurityConfig {
                 // Módulo Citas permitido para Recepcionistas, Médicos y Administradores
                 .requestMatchers("/citas/**", "/api/citas/**").hasAnyRole("ADMINISTRADOR", "RECEPCIONISTA", "MEDICO")
                 
+<<<<<<< HEAD
                 // Módulo Horarios (Gestión de Horarios) restringido a Administradores, Recepcionistas y Médicos
                 .requestMatchers("/horarios/**", "/api/horarios/**").hasAnyRole("ADMINISTRADOR", "RECEPCIONISTA", "MEDICO")
 
@@ -56,19 +57,33 @@ public class SecurityConfig {
 
                 // Consulta médica del doctor al atender una cita: solo Médicos (y Administrador para supervisión)
                 .requestMatchers("/medico/**").hasAnyRole("ADMINISTRADOR", "MEDICO")
+=======
+                // Módulo Horarios permitido para Médicos y Administradores
+                .requestMatchers("/horarios/**", "/api/horarios/**").hasAnyRole("ADMINISTRADOR", "MEDICO")
+                
+                // Módulo Pacientes permitido para Recepcionistas, Médicos y Administradores
+                .requestMatchers("/pacientes/**", "/api/pacientes/**").hasAnyRole("ADMINISTRADOR", "RECEPCIONISTA", "MEDICO")
+                
+                // Acto Médico y Ficha Paciente restringido a Médicos y Administradores
+                .requestMatchers("/ficha-paciente/**", "/api/consultas/**").hasAnyRole("ADMINISTRADOR", "MEDICO")
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                 
                 // Módulo Farmacia restringido a Farmacéuticos y Administradores
                 .requestMatchers("/farmacia/**", "/api/farmacia/**").hasAnyRole("ADMINISTRADOR", "FARMACEUTICO")
                 
+<<<<<<< HEAD
                 // Módulo Inventario restringido a Farmacéuticos y Administradores
                 .requestMatchers("/inventario/**", "/api/inventario/**").hasAnyRole("ADMINISTRADOR", "FARMACEUTICO")
                 
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                 // Cualquier otra solicitud requiere estar autenticado
                 .anyRequest().authenticated()
             )
             // Configuración del login institucional
             .formLogin(form -> form
                 .loginPage("/login")
+<<<<<<< HEAD
                 // El médico solo tiene el módulo de Citas: se le lleva directo allí.
                 // El resto del personal aterriza en el Dashboard.
                 .successHandler((request, response, authentication) -> {
@@ -82,6 +97,9 @@ public class SecurityConfig {
                         response.sendRedirect(request.getContextPath() + "/dashboard");
                     }
                 })
+=======
+                .defaultSuccessUrl("/dashboard", true)
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                 .failureUrl("/login?error=true")
                 .permitAll()
             )

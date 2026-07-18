@@ -28,9 +28,12 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
      * Obtiene el historial de citas de un paciente
      */
     List<Cita> findByPaciente(Paciente paciente);
+<<<<<<< HEAD
 
     /**
      * Obtiene todas las citas asignadas a un médico (pasadas, de hoy y futuras)
      */
     List<Cita> findByMedico(Usuario medico);
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 }

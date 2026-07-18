@@ -7,6 +7,7 @@
                 <h2 class="text-2xl font-bold text-slate-800">Directorio de Pacientes</h2>
                 <p class="text-sm text-slate-500 mt-1">Gestión de historias clínicas y expedientes</p>
             </div>
+<<<<<<< HEAD
             <div class="flex items-center space-x-2">
                 <a th:href="@{/pacientes/exportar-csv(busqueda=${busqueda})}"
                    class="wire-btn px-4 py-2.5 cursor-pointer inline-flex items-center" title="Exportar a Excel (CSV)">
@@ -20,6 +21,11 @@
                     + REGISTRAR PACIENTE
                 </button>
             </div>
+=======
+            <button onclick="toggleModalPaciente(true)" class="wire-btn-dark px-5 py-2.5 cursor-pointer">
+                + REGISTRAR PACIENTE
+            </button>
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
         </div>
 
         <!-- Filters Form -->
@@ -40,6 +46,7 @@
             </div>
         </form>
 
+<<<<<<< HEAD
         <!-- Alert Messages -->
         <div th:if="${mensajeError}" class="mb-4 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-lg">
             <span th:text="${mensajeError}">Error</span>
@@ -48,11 +55,14 @@
             <span th:text="${mensajeSuccess}">Éxito</span>
         </div>
 
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
         <!-- Patients Directory Table -->
         <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex-1 overflow-auto">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
                     <tr class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
+<<<<<<< HEAD
                         <th class="p-4">
                             <a th:href="@{/pacientes(busqueda=${busqueda}, size=${size}, sort='numeroHistoriaClinica', dir=(${sort == 'numeroHistoriaClinica' and dir == 'asc'} ? 'desc' : 'asc'))}"
                                class="hover:text-slate-800 cursor-pointer">
@@ -79,6 +89,13 @@
                                 Estado <span th:if="${sort == 'estado'}" th:text="${dir == 'asc'} ? '▲' : '▼'"></span>
                             </a>
                         </th>
+=======
+                        <th class="p-4">Historia Nro.</th>
+                        <th class="p-4">DNI</th>
+                        <th class="p-4">Nombres y Apellidos</th>
+                        <th class="p-4">Contacto / Correo</th>
+                        <th class="p-4">Estado</th>
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                         <th class="p-4 text-right">Acciones</th>
                     </tr>
                 </thead>
@@ -87,7 +104,10 @@
                         <td class="p-4 font-mono font-medium text-blue-600" th:text="${paciente.numeroHistoriaClinica}">HC-000001</td>
                         <td class="p-4 text-slate-700" th:text="${paciente.dni}">74839201</td>
                         <td class="p-4 font-semibold text-slate-800" th:text="${paciente.apellidos + ', ' + paciente.nombres}">Roberto Díaz Suárez</td>
+<<<<<<< HEAD
                         <td class="p-4 text-slate-700" th:text="${paciente.edad != null ? paciente.edad : '-'}">30</td>
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                         <td class="p-4">
                             <div class="text-slate-800 font-medium" th:text="${paciente.telefono}">987654</div>
                             <div class="text-xs text-slate-400" th:text="${paciente.correo}">correo@correo.com</div>
@@ -97,7 +117,11 @@
                                   th:classappend="${paciente.estado.name() == 'ACTIVO'} ? 'badge-green' : (${paciente.estado.name() == 'INACTIVO'} ? 'badge-yellow' : 'badge-red')"
                                   th:text="${paciente.estado.name()}">ACTIVO</span>
                         </td>
+<<<<<<< HEAD
                         <td class="p-4 text-right space-x-2 whitespace-nowrap">
+=======
+                        <td class="p-4 text-right space-x-2">
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                             <!-- Button triggers editing by copying properties into form -->
                             <button type="button" 
                                     th:onclick="editPaciente([[${paciente}]])" 
@@ -108,6 +132,7 @@
                                class="wire-btn-dark px-3 py-1.5 text-[10px] bg-slate-800 border-slate-800 text-white font-semibold rounded hover:bg-slate-900 transition flex-inline justify-center">
                                Abrir Historia
                             </a>
+<<<<<<< HEAD
                             <form th:if="${paciente.estado.name() == 'ACTIVO' or paciente.estado.name() == 'INACTIVO'}"
                                   th:action="@{/pacientes/cambiar-estado}" method="post" class="inline"
                                   onsubmit="return confirmarCambioEstado(this)">
@@ -123,11 +148,18 @@
                     </tr>
                     <tr th:if="${pacientes == null || pacientes.isEmpty()}">
                         <td colspan="7" class="text-center text-slate-400 italic py-8 bg-white">No se encontraron pacientes registrados</td>
+=======
+                        </td>
+                    </tr>
+                    <tr th:if="${pacientes == null || pacientes.isEmpty()}">
+                        <td colspan="6" class="text-center text-slate-400 italic py-8 bg-white">No se encontraron pacientes registrados</td>
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                     </tr>
                 </tbody>
             </table>
         </div>
 
+<<<<<<< HEAD
         <!-- Paginación -->
         <div th:if="${pacientesPage != null and pacientesPage.totalPages > 0}" class="flex justify-between items-center mt-4 text-sm text-slate-600">
             <span>
@@ -151,6 +183,12 @@
         <div id="modal-paciente" class="hidden-view fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
             <div class="wire-box w-full max-w-2xl flex flex-col border-0 shadow-2xl overflow-hidden rounded-2xl bg-white">
                 <form th:action="@{/pacientes/guardar}" method="post" id="form-paciente" onsubmit="return prepararEnvio()">
+=======
+        <!-- Patient Registration Modal -->
+        <div id="modal-paciente" class="hidden-view fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
+            <div class="wire-box w-full max-w-2xl flex flex-col border-0 shadow-2xl overflow-hidden rounded-2xl bg-white">
+                <form th:action="@{/pacientes/guardar}" method="post">
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                     <input type="hidden" name="idPaciente" id="edit-id-paciente">
                     
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
@@ -164,6 +202,7 @@
                         <div class="grid grid-cols-2 gap-5">
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-slate-700">DNI / Documento</label>
+<<<<<<< HEAD
                                 <input type="text" name="dni" id="form-dni" class="wire-input" placeholder="Nro. de Documento (8 a 9 dígitos)"
                                        inputmode="numeric" pattern="\d{8,9}" minlength="8" maxlength="9"
                                        title="El DNI debe tener entre 8 y 9 dígitos numéricos"
@@ -171,6 +210,9 @@
                                        onblur="verificarDniDuplicado()"
                                        required />
                                 <p id="dni-feedback" class="text-xs mt-1 hidden"></p>
+=======
+                                <input type="text" name="dni" id="form-dni" class="wire-input" placeholder="Nro. de Documento (8 dígitos)" required />
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                             </div>
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nro. Historia Clínica</label>
@@ -181,6 +223,7 @@
                         <div class="grid grid-cols-2 gap-5">
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nombres Completos</label>
+<<<<<<< HEAD
                                 <input type="text" name="nombres" id="form-nombres" class="wire-input uppercase"
                                        pattern="[A-ZÑÁÉÍÓÚÜ ]+" maxlength="100"
                                        title="Solo se permiten letras en mayúscula, sin números ni símbolos"
@@ -194,6 +237,13 @@
                                        title="Solo se permiten letras en mayúscula, sin números ni símbolos"
                                        oninput="this.value = this.value.toUpperCase().replace(/[^A-ZÑÁÉÍÓÚÜ ]/g, '')"
                                        required />
+=======
+                                <input type="text" name="nombres" id="form-nombres" class="wire-input" required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Apellidos Completos</label>
+                                <input type="text" name="apellidos" id="form-apellidos" class="wire-input" required />
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                             </div>
                         </div>
                         
@@ -212,11 +262,15 @@
                             </div>
                             <div>
                                 <label class="block font-semibold text-sm mb-1.5 text-slate-700">Teléfono Móvil</label>
+<<<<<<< HEAD
                                 <input type="text" name="telefono" id="form-telefono" class="wire-input" placeholder="Ej. 987654321"
                                        inputmode="numeric" pattern="\d{9}" minlength="9" maxlength="9"
                                        title="El teléfono debe tener exactamente 9 dígitos numéricos"
                                        oninput="this.value = this.value.replace(/\D/g, '').slice(0, 9)"
                                        required />
+=======
+                                <input type="text" name="telefono" id="form-telefono" class="wire-input" placeholder="Ej. 987654321" required />
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                             </div>
                         </div>
                         
@@ -239,13 +293,18 @@
                     
                     <div class="p-5 border-t border-slate-100 flex justify-end space-x-3 bg-white">
                         <button type="button" onclick="toggleModalPaciente(false)" class="wire-btn px-5 py-2.5 cursor-pointer">Cancelar</button>
+<<<<<<< HEAD
                         <button type="submit" id="btn-guardar-paciente" class="wire-btn-dark px-6 py-2.5 shadow-md text-[13px] cursor-pointer">Guardar Expediente</button>
+=======
+                        <button type="submit" class="wire-btn-dark px-6 py-2.5 shadow-md text-[13px] cursor-pointer">Guardar Expediente</button>
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                     </div>
                 </form>
             </div>
         </div>
 
         <script>
+<<<<<<< HEAD
             let dniEsDuplicado = false;
 
             // ---------- Límites de la fecha de nacimiento (hoy y hace ~120 años) ----------
@@ -323,6 +382,8 @@
                 return confirm(`¿Seguro que deseas ${accion} al paciente ${nombre}?`);
             }
 
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
             function toggleModalPaciente(show) {
                 const modal = document.getElementById('modal-paciente');
                 if (show) {
@@ -345,12 +406,16 @@
                 document.getElementById('form-direccion').value = p.direccion;
                 document.getElementById('form-correo').value = p.correo || '';
                 document.getElementById('form-alergias').value = p.alergias || '';
+<<<<<<< HEAD
 
                 dniEsDuplicado = false;
                 const feedback = document.getElementById('dni-feedback');
                 feedback.classList.add('hidden');
                 document.getElementById('form-dni').classList.remove('border-red-400');
 
+=======
+                
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                 document.getElementById('modal-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Editar Paciente: ${p.numeroHistoriaClinica}`;
                 toggleModalPaciente(true);
             }
@@ -368,6 +433,7 @@
                 document.getElementById('form-correo').value = '';
                 document.getElementById('form-alergias').value = '';
                 document.getElementById('modal-title').innerHTML = `<span class="bg-emerald-100 text-emerald-600 p-1.5 rounded-lg mr-2 text-sm">👥</span> Registrar Nuevo Paciente`;
+<<<<<<< HEAD
 
                 dniEsDuplicado = false;
                 document.getElementById('dni-feedback').classList.add('hidden');
@@ -376,6 +442,8 @@
                 const boton = document.getElementById('btn-guardar-paciente');
                 boton.disabled = false;
                 boton.innerHTML = 'Guardar Expediente';
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
             }
         </script>
     </section>

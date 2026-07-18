@@ -63,6 +63,7 @@
             </table>
         </div>
 
+<<<<<<< HEAD
         <!-- History of Dispatched Recipes (agrupado por día) -->
         <div class="wire-box bg-white overflow-auto border-0 shadow-sm">
             <div class="p-4 border-b border-slate-200 bg-slate-50">
@@ -109,6 +110,38 @@
                     </tbody>
                 </table>
             </div>
+=======
+        <!-- History of Dispatched Recipes -->
+        <div class="wire-box bg-white overflow-auto border-0 shadow-sm">
+            <div class="p-4 border-b border-slate-200 bg-slate-50">
+                <span class="font-bold text-sm uppercase text-slate-600">Historial de Recetas Entregadas (Despachadas)</span>
+            </div>
+            <table class="w-full text-left">
+                <thead>
+                    <tr>
+                        <th>Fecha de Entrega</th>
+                        <th>Paciente</th>
+                        <th>Medicamento Entregado</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="receta : ${recetasDespachadas}" class="opacity-75">
+                        <td class="text-slate-500 text-xs font-medium" th:text="${#temporals.format(receta.consulta.fechaRegistro, 'dd/MM - hh:mm a')}">12/05 - 10:45 AM</td>
+                        <td>
+                            <div class="font-semibold text-slate-800" th:text="${receta.consulta.cita.paciente.nombres + ' ' + receta.consulta.cita.paciente.apellidos}">Roberto Díaz Suárez</div>
+                        </td>
+                        <td class="font-medium text-slate-700" th:text="${receta.medicamento.nombre}">Paracetamol 500mg</td>
+                        <td class="font-semibold" th:text="${receta.cantidad}">15</td>
+                        <td><span class="badge badge-green">DESPACHADA</span></td>
+                    </tr>
+                    <tr th:if="${recetasDespachadas == null || recetasDespachadas.isEmpty()}">
+                        <td colspan="5" class="text-center text-slate-400 italic py-4 bg-white">No se registran despachos entregados hoy</td>
+                    </tr>
+                </tbody>
+            </table>
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
         </div>
 
         <!-- Dispense Verification Modal -->

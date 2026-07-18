@@ -15,9 +15,12 @@ public interface RecetaRepository extends JpaRepository<Receta, Integer> {
      * Obtiene recetas según su estado de despacho (EMITIDA, DESPACHADA)
      */
     List<Receta> findByEstado(Receta.EstadoReceta estado);
+<<<<<<< HEAD
 
     /**
      * Obtiene todas las recetas emitidas dentro de una consulta médica específica
      */
     List<Receta> findByConsultaIdConsulta(Integer idConsulta);
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 }

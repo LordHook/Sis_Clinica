@@ -38,6 +38,7 @@ public class CitaService {
     }
 
     /**
+<<<<<<< HEAD
      * Lista todas las citas asignadas a un médico (pasadas atendidas, de hoy y agendadas a futuro),
      * ordenadas cronológicamente ascendente.
      */
@@ -60,6 +61,8 @@ public class CitaService {
     }
 
     /**
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
      * Busca una cita específica por su ID
      */
     public Optional<Cita> buscarPorId(Integer id) {
@@ -76,6 +79,7 @@ public class CitaService {
     }
 
     /**
+<<<<<<< HEAD
      * Obtiene las citas del día de hoy asignadas a un médico específico (para su agenda personal),
      * ordenadas cronológicamente.
      */
@@ -88,6 +92,8 @@ public class CitaService {
     }
 
     /**
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
      * Agendar o reprogramar una cita médica con validaciones de choque horario
      */
     @Transactional

@@ -1,8 +1,11 @@
 package com.utp.clinica.repository;
 
 import com.utp.clinica.model.Paciente;
+<<<<<<< HEAD
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -18,6 +21,7 @@ public interface PacienteRepository extends JpaRepository<Paciente, Integer> {
      */
     List<Paciente> findByDniContainingOrNumeroHistoriaClinicaContainingOrNombresContainingOrApellidosContaining(
             String dni, String numeroHistoriaClinica, String nombres, String apellidos);
+<<<<<<< HEAD
 
     /**
      * Misma búsqueda flexible, pero paginada y ordenable (para el directorio de pacientes)
@@ -34,4 +38,6 @@ public interface PacienteRepository extends JpaRepository<Paciente, Integer> {
      * Verifica si existe OTRO paciente (distinto del que se está editando) con ese DNI
      */
     boolean existsByDniAndIdPacienteNot(String dni, Integer idPaciente);
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 }

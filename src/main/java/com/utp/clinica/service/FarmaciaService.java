@@ -77,7 +77,10 @@ public class FarmaciaService {
         // Restamos el inventario y actualizamos los registros correspondientes
         medicamento.setStock(medicamento.getStock() - receta.getCantidad());
         receta.setEstado(Receta.EstadoReceta.DESPACHADA);
+<<<<<<< HEAD
         receta.setFechaDespacho(java.time.LocalDateTime.now());
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 
         medicamentoRepo.save(medicamento);
         recetaRepo.save(receta);
@@ -100,6 +103,7 @@ public class FarmaciaService {
         med.setStock(med.getStock() + cantidad);
         return medicamentoRepo.save(med);
     }
+<<<<<<< HEAD
 
     /**
      * Guarda o actualiza un medicamento en el catálogo
@@ -125,4 +129,6 @@ public class FarmaciaService {
         // Se capturará a nivel de controlador para mostrar el mensaje de error.
         medicamentoRepo.deleteById(id);
     }
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 }

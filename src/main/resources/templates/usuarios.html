@@ -224,7 +224,11 @@
                     
                     <div class="space-y-3">
                         <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+<<<<<<< HEAD
                             <input type="checkbox" id="perm-dashboard" value="dashboard" class="w-4 h-4 text-blue-600 rounded mr-3">
+=======
+                            <input type="checkbox" id="perm-dashboard" value="dashboard" class="w-4 h-4 text-blue-600 rounded mr-3" checked disabled>
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                             <span class="mr-2 text-lg">📊</span>
                             <div>
                                 <span class="font-semibold text-sm text-slate-800">Dashboard</span>
@@ -260,6 +264,7 @@
                         </label>
                         
                         <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+<<<<<<< HEAD
                             <input type="checkbox" id="perm-inventario" value="inventario" class="w-4 h-4 text-blue-600 rounded mr-3">
                             <span class="mr-2 text-lg">📦</span>
                             <div>
@@ -269,6 +274,8 @@
                         </label>
                         
                         <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+=======
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                             <input type="checkbox" id="perm-horarios" value="horarios" class="w-4 h-4 text-blue-600 rounded mr-3">
                             <span class="mr-2 text-lg">⏰</span>
                             <div>
@@ -422,10 +429,19 @@
                 document.getElementById('modal-permisos-title').innerHTML = `<span class="bg-purple-100 text-purple-600 p-1.5 rounded-lg mr-2 text-sm">🛡️</span> Permisos: ${nombreCompleto}`;
                 
                 // Resetear todos los checkboxes
+<<<<<<< HEAD
                 const checkboxes = ['perm-dashboard', 'perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-inventario', 'perm-horarios', 'perm-usuarios'];
                 checkboxes.forEach(id => {
                     document.getElementById(id).checked = false;
                 });
+=======
+                const checkboxes = ['perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-horarios', 'perm-usuarios'];
+                checkboxes.forEach(id => {
+                    document.getElementById(id).checked = false;
+                });
+                // Dashboard siempre activo
+                document.getElementById('perm-dashboard').checked = true;
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
 
                 // Cargar permisos actuales del usuario
                 fetch(`/usuarios/permisos/${idUsuario}`)
@@ -452,9 +468,15 @@
 
             function guardarPermisos() {
                 const idUsuario = document.getElementById('permisos-user-id').value;
+<<<<<<< HEAD
                 const modulos = [];
                 
                 const checkboxes = ['perm-dashboard', 'perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-inventario', 'perm-horarios', 'perm-usuarios'];
+=======
+                const modulos = ['dashboard']; // Dashboard siempre incluido
+                
+                const checkboxes = ['perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-horarios', 'perm-usuarios'];
+>>>>>>> 04de8fab4a00084a57d92da688cda143f373db7a
                 checkboxes.forEach(id => {
                     const checkbox = document.getElementById(id);
                     if (checkbox.checked) {
