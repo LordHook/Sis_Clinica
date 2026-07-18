@@ -48,6 +48,16 @@
             <span th:text="${mensajeSuccess}">Éxito</span>
         </div>
 
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex-1 overflow-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
+                    <tr class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
+                        <th class="p-4">Historia Clínica</th>
+                        <th class="p-4">DNI</th>
+                        <th class="p-4">Apellidos y Nombres</th>
+                        <th class="p-4">Edad</th>
+                        <th class="p-4">Sexo</th>
+                        <th class="p-4">Estado</th>
                         <th class="p-4 text-right">Acciones</th>
                     </tr>
                 </thead>
@@ -57,6 +67,11 @@
                         <td class="p-4 text-slate-700" th:text="${paciente.dni}">74839201</td>
                         <td class="p-4 font-semibold text-slate-800" th:text="${paciente.apellidos + ', ' + paciente.nombres}">Roberto Díaz Suárez</td>
                         <td class="p-4 text-slate-700" th:text="${paciente.edad != null ? paciente.edad : '-'}">30</td>
+                        <td class="p-4 text-slate-700" th:text="${paciente.sexo != null ? paciente.sexo : '-'}">M</td>
+                        <td class="p-4">
+                            <span class="badge" th:classappend="${paciente.estado.name() == 'ACTIVO'} ? 'badge-green' : 'badge-red'" th:text="${paciente.estado.name()}">ACTIVO</span>
+                        </td>
+                        <td class="p-4 text-right font-medium text-xs flex justify-end space-x-2">
                             <!-- Button triggers editing by copying properties into form -->
                             <button type="button" 
                                     th:onclick="editPaciente([[${paciente}]])" 
@@ -282,6 +297,29 @@
                 return confirm(`¿Seguro que deseas ${accion} al paciente ${nombre}?`);
             }
 
+            function toggleModalPaciente(show) {
+                const modal = document.getElementById('modal-paciente');
+                if (show) {
+                    modal.classList.remove('hidden-view');
+                } else {
+                    modal.classList.add('hidden-view');
+                    limpiarFormulario();
+                }
+            }
+
+            function editPaciente(p) {
+                document.getElementById('edit-id-paciente').value = p.idPaciente;
+                document.getElementById('form-dni').value = p.dni;
+                document.getElementById('form-hc').value = p.numeroHistoriaClinica || '';
+                document.getElementById('form-nombres').value = p.nombres;
+                document.getElementById('form-apellidos').value = p.apellidos;
+                document.getElementById('form-nacimiento').value = p.fechaNacimiento || '';
+                document.getElementById('form-sexo').value = p.sexo || 'M';
+                document.getElementById('form-telefono').value = p.telefono || '';
+                document.getElementById('form-direccion').value = p.direccion || '';
+                document.getElementById('form-correo').value = p.correo || '';
+                document.getElementById('form-alergias').value = p.alergias || '';
+                
                 document.getElementById('modal-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Editar Paciente: ${p.numeroHistoriaClinica}`;
                 toggleModalPaciente(true);
             }

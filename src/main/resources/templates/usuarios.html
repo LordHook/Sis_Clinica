@@ -269,6 +269,153 @@
                         </label>
                         
                         <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+                            <input type="checkbox" id="perm-horarios" value="horarios" class="w-4 h-4 text-blue-600 rounded mr-3">
+                            <span class="mr-2 text-lg">⏰</span>
+                            <div>
+                                <span class="font-semibold text-sm text-slate-800">Módulo Horarios</span>
+                                <p class="text-xs text-slate-400">Gestión de turnos médicos</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center p-3 bg-white rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer">
+                            <input type="checkbox" id="perm-usuarios" value="usuarios" class="w-4 h-4 text-blue-600 rounded mr-3">
+                            <span class="mr-2 text-lg">⚙️</span>
+                            <div>
+                                <span class="font-semibold text-sm text-slate-800">Módulo Usuarios</span>
+                                <p class="text-xs text-slate-400">Gestión de personal y roles</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="p-5 border-t border-slate-100 flex justify-end space-x-3 bg-white">
+                    <button type="button" onclick="cerrarModalPermisos()" class="wire-btn px-5 py-2.5 cursor-pointer">Cancelar</button>
+                    <button type="button" onclick="guardarPermisos()" class="wire-btn-dark px-6 py-2.5 shadow-md text-[13px] cursor-pointer">Guardar Permisos</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function toggleModalUsuario(show) {
+                const modal = document.getElementById('modal-usuario');
+                if (show) {
+                    modal.classList.remove('hidden-view');
+                } else {
+                    modal.classList.add('hidden-view');
+                    limpiarFormUsuario();
+                }
+            }
+
+            function toggleEspecialidad() {
+                const rol = document.getElementById('user-role-select').value;
+                const especialidadDiv = document.getElementById('campo-especialidad');
+                const especialidadSelect = document.getElementById('form-user-especialidad');
+                
+                if (rol === 'MEDICO') {
+                    especialidadDiv.classList.remove('hidden-view');
+                    especialidadSelect.required = true;
+                } else {
+                    especialidadDiv.classList.add('hidden-view');
+                    especialidadSelect.required = false;
+                    especialidadSelect.value = '';
+                }
+            }
+
+            function actualizarCorreoUsuario() {
+                const prefix = document.getElementById('form-user-username-prefix').value.trim();
+                const preview = document.getElementById('preview-email');
+                const hiddenInput = document.getElementById('form-user-hidden-email');
+                
+                if (prefix) {
+                    const email = prefix + '@clinica.pe';
+                    preview.textContent = 'Vista previa: ' + email;
+                    hiddenInput.value = email;
+                } else {
+                    preview.textContent = 'Vista previa: —';
+                    hiddenInput.value = '';
+                }
+            }
+
+            function limpiarFormUsuario() {
+                document.getElementById('edit-id-usuario').value = '';
+                document.getElementById('form-user-dni').value = '';
+                document.getElementById('user-role-select').value = 'RECEPCIONISTA';
+                document.getElementById('form-user-nombres').value = '';
+                document.getElementById('form-user-apellidos').value = '';
+                document.getElementById('form-user-username-prefix').value = '';
+                document.getElementById('form-user-pass').value = '';
+                document.getElementById('form-user-pass-confirm').value = '';
+                
+                document.getElementById('form-user-pass').required = true;
+                document.getElementById('form-user-pass-confirm').required = true;
+                document.getElementById('pass-label').innerText = 'Contraseña';
+                document.getElementById('confirm-pass-label').innerText = 'Confirmar Contraseña';
+                
+                toggleEspecialidad();
+                actualizarCorreoUsuario();
+                
+                document.getElementById('modal-user-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Registrar Personal / Usuario`;
+            }
+
+            function editUsuario(btn) {
+                const id = btn.getAttribute('data-id');
+                const dni = btn.getAttribute('data-dni');
+                const rol = btn.getAttribute('data-rol');
+                const nombres = btn.getAttribute('data-nombres');
+                const apellidos = btn.getAttribute('data-apellidos');
+                let usuario = btn.getAttribute('data-usuario') || '';
+                const especialidad = btn.getAttribute('data-especialidad') || '';
+                
+                document.getElementById('edit-id-usuario').value = id;
+                document.getElementById('form-user-dni').value = dni;
+                document.getElementById('user-role-select').value = rol;
+                document.getElementById('form-user-nombres').value = nombres;
+                document.getElementById('form-user-apellidos').value = apellidos;
+                
+                if (usuario.includes('@clinica.pe')) {
+                    usuario = usuario.split('@')[0];
+                }
+                document.getElementById('form-user-username-prefix').value = usuario;
+                
+                document.getElementById('form-user-pass').required = false;
+                document.getElementById('form-user-pass-confirm').required = false;
+                document.getElementById('pass-label').innerHTML = 'Contraseña <span class="text-xs text-slate-400 font-normal">(Dejar en blanco para no cambiar)</span>';
+                document.getElementById('confirm-pass-label').innerHTML = 'Confirmar Contraseña';
+                
+                toggleEspecialidad();
+                document.getElementById('form-user-especialidad').value = especialidad;
+                actualizarCorreoUsuario();
+                
+                document.getElementById('modal-user-title').innerHTML = `<span class="bg-amber-100 text-amber-600 p-1.5 rounded-lg mr-2 text-sm">✏️</span> Editar Usuario`;
+                
+                toggleModalUsuario(true);
+            }
+
+            function validarFormulario() {
+                const pass1 = document.getElementById('form-user-pass').value;
+                const pass2 = document.getElementById('form-user-pass-confirm').value;
+                const idUsuario = document.getElementById('edit-id-usuario').value;
+                
+                if ((!idUsuario || pass1) && pass1 !== pass2) {
+                    alert('Las contraseñas no coinciden.');
+                    return false;
+                }
+                
+                return true;
+            }
+
+            function abrirModalPermisos(btn) {
+                const idUsuario = btn.getAttribute('data-id');
+                const nombre = btn.getAttribute('data-nombrecompleto');
+                
+                document.getElementById('permisos-user-id').value = idUsuario;
+                document.getElementById('modal-permisos-title').innerHTML = `<span class="bg-purple-100 text-purple-600 p-1.5 rounded-lg mr-2 text-sm">🛡️</span> Permisos: ${nombre}`;
+                
+                const checkboxes = ['perm-dashboard', 'perm-citas', 'perm-pacientes', 'perm-farmacia', 'perm-inventario', 'perm-horarios', 'perm-usuarios'];
+                checkboxes.forEach(id => {
+                    const cb = document.getElementById(id);
+                    if (cb) cb.checked = false;
+                });
 
                 // Cargar permisos actuales del usuario
                 fetch(`/usuarios/permisos/${idUsuario}`)

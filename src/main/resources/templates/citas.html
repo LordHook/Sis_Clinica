@@ -265,6 +265,14 @@
                     });
             }
 
+            function cargarMedicosPorEspecialidad() {
+                const idEspecialidad = document.getElementById('especialidad-select').value;
+                const medicoSelect = document.getElementById('medico-select');
+                
+                if (!idEspecialidad) {
+                    medicoSelect.innerHTML = '<option value="">Primero seleccione especialidad...</option>';
+                    medicoSelect.disabled = true;
+                    cargarTurnosDisponibles();
                     return;
                 }
 
@@ -286,17 +294,36 @@
                         }
                         // Al cambiar de especialidad se limpia el médico, por lo que se reinician los turnos
                         cargarTurnosDisponibles();
-                    btn.className = "turno-btn border border-green-300 bg-white hover:bg-green-50 text-green-600 py-3 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer";
-                    const spanLabel = btn.querySelector('span:last-child');
-                    if (spanLabel) spanLabel.innerText = "Libre";
+                    });
+            }
+
+            function seleccionarTurno(element, hora) {
+                // Limpiar selección previa
+                const todos = document.querySelectorAll('.turno-btn');
+                todos.forEach(btn => {
+                    // Restaurar los libres
+                    if (!btn.disabled) {
+                        btn.className = "turno-btn border border-green-300 bg-white hover:bg-green-50 text-green-600 py-3 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer";
+                        const spanLabel = btn.querySelector('span:last-child');
+                        if (spanLabel && spanLabel.innerText === "Seleccionado") spanLabel.innerText = "Libre";
+                    }
                 });
 
+                // Marcar el actual
                 element.className = "turno-btn border-2 border-green-500 bg-green-50 text-green-700 py-3 rounded-xl flex flex-col items-center justify-center transition-all shadow-sm cursor-pointer";
                 const spanLabel = element.querySelector('span:last-child');
                 if (spanLabel) spanLabel.innerText = "Seleccionado";
 
                 document.getElementById('hora-confirmada-texto').innerText = hora;
                 document.getElementById('hora-confirmada-valor').value = hora;
+            }
+
+            function actualizarFechaDisplay() {
+                const input = document.getElementById('fecha-cita');
+                if (input.value) {
+                    const partes = input.value.split('-');
+                    document.getElementById('fecha-display').innerText = partes[2] + '/' + partes[1] + '/' + partes[0];
+                }
             }
 
             function guardarCita() {
