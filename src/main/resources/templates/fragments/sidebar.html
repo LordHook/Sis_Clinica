@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="sidebar" class="w-64 border-r border-slate-200 flex flex-col shrink-0 p-4 bg-white z-20">
+        <div class="flex items-center mb-8 px-2 mt-2">
+            <div class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-xl mr-3 shadow-sm">🏥</div>
+            <div>
+                <h2 class="font-black text-slate-800 tracking-wide text-sm">CLÍNICA UTP</h2>
+                <p class="text-xs text-slate-500 font-medium">Portal Médico</p>
+            </div>
+        </div>
+        
+        <nav class="flex-1 space-y-1 overflow-y-auto pr-2">
+            <div class="text-[10px] font-bold text-slate-400 mb-2 mt-4 uppercase tracking-wider px-3">Menú Operativo</div>
+            
+            <!-- Dashboard Link (visible si tiene permiso 'dashboard') -->
+            <a th:if="${permisosUsuario != null && permisosUsuario.contains('dashboard')}"
+               th:href="@{/dashboard}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+               th:classappend="${paginaActiva == 'dashboard'} ? 'nav-active' : 'nav-inactive'">
+               <span class="mr-3 text-lg opacity-70">📊</span> Dashboard
+            </a>
+            
+            <!-- Citas Link (visible si tiene permiso 'citas') -->
+            <a th:if="${permisosUsuario != null && permisosUsuario.contains('citas')}"
+               th:href="@{/citas}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+               th:classappend="${paginaActiva == 'citas'} ? 'nav-active' : 'nav-inactive'">
+               <span class="mr-3 text-lg opacity-70">📅</span> Módulo Citas
+            </a>
+
+            <!-- Pacientes Link (visible si tiene permiso 'pacientes') -->
+            <a th:if="${permisosUsuario != null && permisosUsuario.contains('pacientes')}"
+               th:href="@{/pacientes}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+               th:classappend="${paginaActiva == 'pacientes'} ? 'nav-active' : 'nav-inactive'">
+               <span class="mr-3 text-lg opacity-70">👥</span> Módulo Pacientes
+            </a>
+            
+            <!-- Farmacia Link (visible si tiene permiso 'farmacia') -->
+            <a th:if="${permisosUsuario != null && permisosUsuario.contains('farmacia')}"
+               th:href="@{/farmacia}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+               th:classappend="${paginaActiva == 'farmacia'} ? 'nav-active' : 'nav-inactive'">
+               <span class="mr-3 text-lg opacity-70">💊</span> Módulo Farmacia
+            </a>
+            
+            <!-- Inventario Link (visible si tiene permiso 'inventario') -->
+            <a th:if="${permisosUsuario != null && permisosUsuario.contains('inventario')}"
+               th:href="@{/inventario}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+               th:classappend="${paginaActiva == 'inventario'} ? 'nav-active' : 'nav-inactive'">
+               <span class="mr-3 text-lg opacity-70">📦</span> Inventario
+            </a>
+            
+            <!-- Administración (visible si tiene permiso 'usuarios' o 'horarios') -->
+            <div th:if="${permisosUsuario != null && (permisosUsuario.contains('usuarios') || permisosUsuario.contains('horarios'))}">
+                <div class="text-[10px] font-bold text-slate-400 mb-2 mt-6 uppercase tracking-wider px-3">Administración</div>
+                
+                <a th:if="${permisosUsuario.contains('usuarios')}"
+                   th:href="@{/usuarios}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+                   th:classappend="${paginaActiva == 'usuarios'} ? 'nav-active' : 'nav-inactive'">
+                   <span class="mr-3 text-lg opacity-70">🛡️</span> Gestión Usuarios
+                </a>
+                
+                <a th:if="${permisosUsuario.contains('horarios')}"
+                   th:href="@{/horarios}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
+                   th:classappend="${paginaActiva == 'horarios'} ? 'nav-active' : 'nav-inactive'">
+                   <span class="mr-3 text-lg opacity-70">⏰</span> Gestión Horarios
+                </a>
+            </div>
+        </nav>
+
+        <!-- Logout Form (POST request is safer and standard for Spring Security) -->
+        <form th:action="@{/logout}" method="post" class="mt-6">
+            <button type="submit" class="py-3 w-full text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-center font-semibold text-sm transition border-0 bg-transparent cursor-pointer">
+                <span class="mr-2">🚪</span> Cerrar Sesión
+            </button>
+        </form>
+    </div>
+</body>
+</html>

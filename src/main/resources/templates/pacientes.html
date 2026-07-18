@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: base(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section class="p-0 h-full flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">Directorio de Pacientes</h2>
+                <p class="text-sm text-slate-500 mt-1">Gestión de historias clínicas y expedientes</p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <a th:href="@{/pacientes/exportar-csv(busqueda=${busqueda})}"
+                   class="wire-btn px-4 py-2.5 cursor-pointer inline-flex items-center" title="Exportar a Excel (CSV)">
+                    📊 EXCEL
+                </a>
+                <a th:href="@{/pacientes/exportar-pdf(busqueda=${busqueda})}" target="_blank"
+                   class="wire-btn px-4 py-2.5 cursor-pointer inline-flex items-center" title="Exportar / Imprimir PDF">
+                    📄 PDF
+                </a>
+                <button onclick="toggleModalPaciente(true)" class="wire-btn-dark px-5 py-2.5 cursor-pointer">
+                    + REGISTRAR PACIENTE
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters Form -->
+        <form th:action="@{/pacientes}" method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="relative col-span-2">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">🔍</span>
+                <input type="text" name="busqueda" placeholder="Buscar por DNI, Nro. Historia o Apellidos..." class="w-full border border-slate-300 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+            <div>
+                <button type="submit" class="wire-btn w-full py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50 font-bold transition">
+                    Buscar
+                </button>
+            </div>
+            <div>
+                <a th:href="@{/pacientes}" class="wire-btn w-full py-2 bg-slate-200 border-0 rounded-lg text-sm text-slate-700 hover:bg-slate-300 font-bold transition flex items-center justify-center">
+                    Limpiar
+                </a>
+            </div>
+        </form>
+
+        <!-- Alert Messages -->
+        <div th:if="${mensajeError}" class="mb-4 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-lg">
+            <span th:text="${mensajeError}">Error</span>
+        </div>
+        <div th:if="${mensajeSuccess}" class="mb-4 p-3.5 bg-green-50 border border-green-200 text-green-700 text-xs font-bold rounded-lg">
+            <span th:text="${mensajeSuccess}">Éxito</span>
+        </div>
+
+        <!-- Patients Directory Table -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex-1 overflow-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
+                    <tr class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
+                        <th class="p-4">
+                            <a th:href="@{/pacientes(busqueda=${busqueda}, size=${size}, sort='numeroHistoriaClinica', dir=(${sort == 'numeroHistoriaClinica' and dir == 'asc'} ? 'desc' : 'asc'))}"
+                               class="hover:text-slate-800 cursor-pointer">
+                                Historia Nro. <span th:if="${sort == 'numeroHistoriaClinica'}" th:text="${dir == 'asc'} ? '▲' : '▼'"></span>
+                            </a>
+                        </th>
+                        <th class="p-4">
+                            <a th:href="@{/pacientes(busqueda=${busqueda}, size=${size}, sort='dni', dir=(${sort == 'dni' and dir == 'asc'} ? 'desc' : 'asc'))}"
+                               class="hover:text-slate-800 cursor-pointer">
+                                DNI <span th:if="${sort == 'dni'}" th:text="${dir == 'asc'} ? '▲' : '▼'"></span>
+                            </a>
+                        </th>
+                        <th class="p-4">
+                            <a th:href="@{/pacientes(busqueda=${busqueda}, size=${size}, sort='apellidos', dir=(${sort == 'apellidos' and dir == 'asc'} ? 'desc' : 'asc'))}"
+                               class="hover:text-slate-800 cursor-pointer">
+                                Nombres y Apellidos <span th:if="${sort == 'apellidos'}" th:text="${dir == 'asc'} ? '▲' : '▼'"></span>
+                            </a>
+                        </th>
+                        <th class="p-4">Edad</th>
+                        <th class="p-4">Contacto / Correo</th>
+                        <th class="p-4">
+                            <a th:href="@{/pacientes(busqueda=${busqueda}, size=${size}, sort='estado', dir=(${sort == 'estado' and dir == 'asc'} ? 'desc' : 'asc'))}"
+                               class="hover:text-slate-800 cursor-pointer">
+                                Estado <span th:if="${sort == 'estado'}" th:text="${dir == 'asc'} ? '▲' : '▼'"></span>
+                            </a>
+                        </th>
+                        <th class="p-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-slate-100">
+                    <tr th:each="paciente : ${pacientes}" class="hover:bg-slate-50/50 transition-colors">
+                        <td class="p-4 font-mono font-medium text-blue-600" th:text="${paciente.numeroHistoriaClinica}">HC-000001</td>
+                        <td class="p-4 text-slate-700" th:text="${paciente.dni}">74839201</td>
+                        <td class="p-4 font-semibold text-slate-800" th:text="${paciente.apellidos + ', ' + paciente.nombres}">Roberto Díaz Suárez</td>
+                        <td class="p-4 text-slate-700" th:text="${paciente.edad != null ? paciente.edad : '-'}">30</td>
+                        <td class="p-4">
+                            <div class="text-slate-800 font-medium" th:text="${paciente.telefono}">987654</div>
+                            <div class="text-xs text-slate-400" th:text="${paciente.correo}">correo@correo.com</div>
+                        </td>
+                        <td class="p-4">
+                            <span class="badge" 
+                                  th:classappend="${paciente.estado.name() == 'ACTIVO'} ? 'badge-green' : (${paciente.estado.name() == 'INACTIVO'} ? 'badge-yellow' : 'badge-red')"
+                                  th:text="${paciente.estado.name()}">ACTIVO</span>
+                        </td>
+                        <td class="p-4 text-right space-x-2 whitespace-nowrap">
+                            <!-- Button triggers editing by copying properties into form -->
+                            <button type="button" 
+                                    th:onclick="editPaciente([[${paciente}]])" 
+                                    class="wire-btn px-3 py-1.5 text-[10px] cursor-pointer">
+                                Editar
+                            </button>
+                            <a th:href="@{/ficha-paciente/{id}(id=${paciente.idPaciente})}" 
+                               class="wire-btn-dark px-3 py-1.5 text-[10px] bg-slate-800 border-slate-800 text-white font-semibold rounded hover:bg-slate-900 transition flex-inline justify-center">
+                               Abrir Historia
+                            </a>
+                            <form th:if="${paciente.estado.name() == 'ACTIVO' or paciente.estado.name() == 'INACTIVO'}"
+                                  th:action="@{/pacientes/cambiar-estado}" method="post" class="inline"
+                                  onsubmit="return confirmarCambioEstado(this)">
+                                <input type="hidden" name="idPaciente" th:value="${paciente.idPaciente}">
+                                <input type="hidden" name="nuevoEstado" th:value="${paciente.estado.name() == 'ACTIVO'} ? 'INACTIVO' : 'ACTIVO'">
+                                <input type="hidden" class="nombre-paciente-oculto" th:value="${paciente.nombres + ' ' + paciente.apellidos}">
+                                <button type="submit"
+                                        th:text="${paciente.estado.name() == 'ACTIVO'} ? 'Desactivar' : 'Activar'"
+                                        class="wire-btn px-3 py-1.5 text-[10px] cursor-pointer">
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${pacientes == null || pacientes.isEmpty()}">
+                        <td colspan="7" class="text-center text-slate-400 italic py-8 bg-white">No se encontraron pacientes registrados</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        <div th:if="${pacientesPage != null and pacientesPage.totalPages > 0}" class="flex justify-between items-center mt-4 text-sm text-slate-600">
+            <span>
+                Página <b th:text="${pacientesPage.number + 1}">1</b> de <b th:text="${pacientesPage.totalPages}">1</b>
+                — <span th:text="${pacientesPage.totalElements}">0</span> paciente(s) en total
+            </span>
+            <div class="flex items-center space-x-2">
+                <a th:if="${pacientesPage.number > 0}"
+                   th:href="@{/pacientes(busqueda=${busqueda}, size=${size}, sort=${sort}, dir=${dir}, page=${pacientesPage.number - 1})}"
+                   class="wire-btn px-3 py-1.5 text-xs">« Anterior</a>
+                <span th:unless="${pacientesPage.number > 0}" class="wire-btn px-3 py-1.5 text-xs opacity-40 cursor-not-allowed">« Anterior</span>
+
+                <a th:if="${pacientesPage.number + 1 < pacientesPage.totalPages}"
+                   th:href="@{/pacientes(busqueda=${busqueda}, size=${size}, sort=${sort}, dir=${dir}, page=${pacientesPage.number + 1})}"
+                   class="wire-btn px-3 py-1.5 text-xs">Siguiente »</a>
+                <span th:unless="${pacientesPage.number + 1 < pacientesPage.totalPages}" class="wire-btn px-3 py-1.5 text-xs opacity-40 cursor-not-allowed">Siguiente »</span>
+            </div>
+        </div>
+
+        <!-- Patient Registration Modal -->
+        <div id="modal-paciente" class="hidden-view fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
+            <div class="wire-box w-full max-w-2xl flex flex-col border-0 shadow-2xl overflow-hidden rounded-2xl bg-white">
+                <form th:action="@{/pacientes/guardar}" method="post" id="form-paciente" onsubmit="return prepararEnvio()">
+                    <input type="hidden" name="idPaciente" id="edit-id-paciente">
+                    
+                    <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
+                        <h3 class="font-bold text-lg text-slate-800 flex items-center" id="modal-title">
+                            <span class="bg-emerald-100 text-emerald-600 p-1.5 rounded-lg mr-2 text-sm">👥</span> Registrar Nuevo Paciente
+                        </h3>
+                        <button type="button" onclick="toggleModalPaciente(false)" class="text-slate-400 hover:text-slate-700 text-xl leading-none border-0 bg-transparent cursor-pointer">&times;</button>
+                    </div>
+                    
+                    <div class="p-6 space-y-5 bg-slate-50 overflow-y-auto max-h-[70vh]">
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">DNI / Documento</label>
+                                <input type="text" name="dni" id="form-dni" class="wire-input" placeholder="Nro. de Documento (8 a 9 dígitos)"
+                                       inputmode="numeric" pattern="\d{8,9}" minlength="8" maxlength="9"
+                                       title="El DNI debe tener entre 8 y 9 dígitos numéricos"
+                                       oninput="this.value = this.value.replace(/\D/g, '').slice(0, 9)"
+                                       onblur="verificarDniDuplicado()"
+                                       required />
+                                <p id="dni-feedback" class="text-xs mt-1 hidden"></p>
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nro. Historia Clínica</label>
+                                <input type="text" disabled id="form-hc" value="Autogenerado al guardar" class="wire-input bg-slate-100 text-slate-400 text-center font-medium italic" />
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nombres Completos</label>
+                                <input type="text" name="nombres" id="form-nombres" class="wire-input uppercase"
+                                       pattern="[A-ZÑÁÉÍÓÚÜ ]+" maxlength="100"
+                                       title="Solo se permiten letras en mayúscula, sin números ni símbolos"
+                                       oninput="this.value = this.value.toUpperCase().replace(/[^A-ZÑÁÉÍÓÚÜ ]/g, '')"
+                                       required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Apellidos Completos</label>
+                                <input type="text" name="apellidos" id="form-apellidos" class="wire-input uppercase"
+                                       pattern="[A-ZÑÁÉÍÓÚÜ ]+" maxlength="100"
+                                       title="Solo se permiten letras en mayúscula, sin números ni símbolos"
+                                       oninput="this.value = this.value.toUpperCase().replace(/[^A-ZÑÁÉÍÓÚÜ ]/g, '')"
+                                       required />
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-5">
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">F. Nacimiento</label>
+                                <input type="date" name="fechaNacimiento" id="form-nacimiento" class="wire-input text-slate-600" required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Sexo biológico</label>
+                                <select name="sexo" id="form-sexo" class="wire-input text-slate-600">
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                    <option value="OTRO">Otro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Teléfono Móvil</label>
+                                <input type="text" name="telefono" id="form-telefono" class="wire-input" placeholder="Ej. 987654321"
+                                       inputmode="numeric" pattern="\d{9}" minlength="9" maxlength="9"
+                                       title="El teléfono debe tener exactamente 9 dígitos numéricos"
+                                       oninput="this.value = this.value.replace(/\D/g, '').slice(0, 9)"
+                                       required />
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Dirección Domiciliaria</label>
+                                <input type="text" name="direccion" id="form-direccion" class="wire-input" placeholder="Av. Calle..." required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Correo (Opcional)</label>
+                                <input type="email" name="correo" id="form-correo" class="wire-input" placeholder="correo@ejemplo.com" />
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-xl border border-red-100 mt-2">
+                            <label class="block font-bold text-sm mb-1.5 text-red-600 flex items-center">⚠️ Registro de Alergias (Vital)</label>
+                            <textarea name="alergias" id="form-alergias" rows="2" class="wire-input border-red-200 focus:border-red-400 focus:ring-red-100" placeholder="Especifique alergias conocidas (ej. Penicilina), si las tiene..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 border-t border-slate-100 flex justify-end space-x-3 bg-white">
+                        <button type="button" onclick="toggleModalPaciente(false)" class="wire-btn px-5 py-2.5 cursor-pointer">Cancelar</button>
+                        <button type="submit" id="btn-guardar-paciente" class="wire-btn-dark px-6 py-2.5 shadow-md text-[13px] cursor-pointer">Guardar Expediente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            let dniEsDuplicado = false;
+
+            // ---------- Límites de la fecha de nacimiento (hoy y hace ~120 años) ----------
+            function configurarLimitesFecha() {
+                const inputFecha = document.getElementById('form-nacimiento');
+                const hoy = new Date();
+                const maxStr = hoy.toISOString().split('T')[0];
+                const minFecha = new Date(hoy.getFullYear() - 120, hoy.getMonth(), hoy.getDate());
+                const minStr = minFecha.toISOString().split('T')[0];
+                inputFecha.setAttribute('max', maxStr);
+                inputFecha.setAttribute('min', minStr);
+            }
+            configurarLimitesFecha();
+
+            // ---------- Verificación AJAX de DNI duplicado (al perder el foco) ----------
+            function verificarDniDuplicado() {
+                const inputDni = document.getElementById('form-dni');
+                const feedback = document.getElementById('dni-feedback');
+                const dni = inputDni.value.trim();
+                const idPaciente = document.getElementById('edit-id-paciente').value;
+
+                dniEsDuplicado = false;
+                feedback.classList.add('hidden');
+
+                if (!/^\d{8,9}$/.test(dni)) {
+                    return; // formato inválido, la validación HTML5 ya se encarga de avisar
+                }
+
+                let url = '/pacientes/verificar-dni?dni=' + encodeURIComponent(dni);
+                if (idPaciente) {
+                    url += '&idPaciente=' + encodeURIComponent(idPaciente);
+                }
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        feedback.classList.remove('hidden');
+                        if (data.existe) {
+                            dniEsDuplicado = true;
+                            feedback.textContent = '⚠️ Ya existe un paciente registrado con este DNI.';
+                            feedback.className = 'text-xs mt-1 text-red-600 font-semibold';
+                            inputDni.classList.add('border-red-400');
+                        } else {
+                            dniEsDuplicado = false;
+                            feedback.textContent = '✓ DNI disponible.';
+                            feedback.className = 'text-xs mt-1 text-green-600 font-semibold';
+                            inputDni.classList.remove('border-red-400');
+                        }
+                    })
+                    .catch(() => {
+                        // Si falla la verificación (ej. sin conexión), no bloqueamos el registro;
+                        // la validación de "unique" en el servidor sigue siendo la barrera final.
+                        dniEsDuplicado = false;
+                        feedback.classList.add('hidden');
+                    });
+            }
+
+            // ---------- Spinner en el botón Guardar + bloqueo si el DNI está duplicado ----------
+            function prepararEnvio() {
+                if (dniEsDuplicado) {
+                    alert('No se puede guardar: el DNI ingresado ya pertenece a otro paciente.');
+                    return false;
+                }
+                const boton = document.getElementById('btn-guardar-paciente');
+                boton.disabled = true;
+                boton.innerHTML = '<span class="inline-block animate-spin mr-2">⏳</span> Guardando...';
+                return true;
+            }
+
+            // ---------- Confirmación antes de Activar/Desactivar un paciente ----------
+            function confirmarCambioEstado(form) {
+                const nuevoEstado = form.querySelector('input[name="nuevoEstado"]').value;
+                const nombre = form.querySelector('.nombre-paciente-oculto').value;
+                const accion = nuevoEstado === 'ACTIVO' ? 'ACTIVAR' : 'DESACTIVAR';
+                return confirm(`¿Seguro que deseas ${accion} al paciente ${nombre}?`);
+            }
+
+            function toggleModalPaciente(show) {
+                const modal = document.getElementById('modal-paciente');
+                if (show) {
+                    modal.classList.remove('hidden-view');
+                } else {
+                    modal.classList.add('hidden-view');
+                    limpiarFormulario();
+                }
+            }
+
+            function editPaciente(p) {
+                document.getElementById('edit-id-paciente').value = p.idPaciente;
+                document.getElementById('form-dni').value = p.dni;
+                document.getElementById('form-hc').value = p.numeroHistoriaClinica;
+                document.getElementById('form-nombres').value = p.nombres;
+                document.getElementById('form-apellidos').value = p.apellidos;
+                document.getElementById('form-nacimiento').value = p.fechaNacimiento;
+                document.getElementById('form-sexo').value = p.sexo;
+                document.getElementById('form-telefono').value = p.telefono;
+                document.getElementById('form-direccion').value = p.direccion;
+                document.getElementById('form-correo').value = p.correo || '';
+                document.getElementById('form-alergias').value = p.alergias || '';
+
+                dniEsDuplicado = false;
+                const feedback = document.getElementById('dni-feedback');
+                feedback.classList.add('hidden');
+                document.getElementById('form-dni').classList.remove('border-red-400');
+
+                document.getElementById('modal-title').innerHTML = `<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">👤</span> Editar Paciente: ${p.numeroHistoriaClinica}`;
+                toggleModalPaciente(true);
+            }
+
+            function limpiarFormulario() {
+                document.getElementById('edit-id-paciente').value = '';
+                document.getElementById('form-dni').value = '';
+                document.getElementById('form-hc').value = 'Autogenerado al guardar';
+                document.getElementById('form-nombres').value = '';
+                document.getElementById('form-apellidos').value = '';
+                document.getElementById('form-nacimiento').value = '';
+                document.getElementById('form-sexo').value = 'M';
+                document.getElementById('form-telefono').value = '';
+                document.getElementById('form-direccion').value = '';
+                document.getElementById('form-correo').value = '';
+                document.getElementById('form-alergias').value = '';
+                document.getElementById('modal-title').innerHTML = `<span class="bg-emerald-100 text-emerald-600 p-1.5 rounded-lg mr-2 text-sm">👥</span> Registrar Nuevo Paciente`;
+
+                dniEsDuplicado = false;
+                document.getElementById('dni-feedback').classList.add('hidden');
+                document.getElementById('form-dni').classList.remove('border-red-400');
+
+                const boton = document.getElementById('btn-guardar-paciente');
+                boton.disabled = false;
+                boton.innerHTML = 'Guardar Expediente';
+            }
+        </script>
+    </section>
+</body>
+</html>

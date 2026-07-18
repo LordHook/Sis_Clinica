@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: base(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section>
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-800">Panel de Control</h2>
+            <p class="text-sm text-slate-500 mt-1">Resumen general de las operaciones de hoy</p>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Citas Hoy -->
+            <div class="wire-box h-36 flex flex-col items-center justify-center p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white border-0 shadow-lg relative overflow-hidden">
+                <div class="absolute right-0 top-0 opacity-10 text-9xl -mt-4 -mr-4">📅</div>
+                <div class="text-xs font-semibold mb-2 uppercase tracking-widest text-blue-100 z-10">Citas Agendadas Hoy</div>
+                <div class="text-6xl font-black z-10" th:text="${totalCitasHoy}">0</div>
+            </div>
+
+            <!-- Total Pacientes -->
+            <div class="wire-box h-36 flex flex-col items-center justify-center p-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-0 shadow-lg relative overflow-hidden">
+                <div class="absolute right-0 top-0 opacity-10 text-9xl -mt-4 -mr-4">👥</div>
+                <div class="text-xs font-semibold mb-2 uppercase tracking-widest text-emerald-100 z-10">Pacientes Registrados</div>
+                <div class="text-6xl font-black z-10" th:text="${totalPacientes}">0</div>
+            </div>
+
+            <!-- Eficiencia Diaria -->
+            <div class="wire-box h-36 flex flex-col justify-center p-6 bg-white border border-slate-200 shadow-sm relative overflow-hidden">
+                <div class="text-xs font-semibold mb-3 uppercase tracking-widest text-slate-500">Eficiencia de Atención</div>
+                <div class="flex items-end mb-2">
+                    <span class="text-4xl font-black text-slate-800" th:text="${eficienciaCitas} + '%'">0%</span>
+                    <span class="text-sm font-medium text-slate-400 ml-2 mb-1" th:text="${citasAtendidas} + ' de ' + ${totalCitasHoy} + ' citas'">0 de 0 citas</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2.5">
+                    <div class="bg-indigo-600 h-2.5 rounded-full" th:style="'width: ' + ${eficienciaCitas} + '%'"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Dynamic Bar Chart for Specialties -->
+            <div class="wire-box p-6 flex flex-col bg-white">
+                <div class="font-bold text-sm text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-3 mb-4 flex items-center">
+                    <span class="mr-2">📈</span> Citas por Especialidad
+                </div>
+                
+                <div class="bar-chart-container mb-2 h-48">
+                    <!-- Iterating through our Java map -->
+                    <div th:each="entry, iter : ${citasPorEspecialidad}" 
+                         class="bar" 
+                         th:classappend="${iter.index == 0} ? 'bg-blue-500' : (${iter.index == 1} ? 'bg-indigo-400' : (${iter.index == 2} ? 'bg-cyan-500' : 'bg-emerald-400'))"
+                         th:style="'height: ' + ${entry.value * 25 > 100 ? 100 : entry.value * 25} + '%;'">
+                        <span class="bar-label-top" th:text="${entry.value}">0</span>
+                        <span class="bar-label-bottom text-[8px] whitespace-nowrap" th:text="${entry.key}">ESP</span>
+                    </div>
+                    <!-- Fallback if empty -->
+                    <div th:if="${citasPorEspecialidad == null || citasPorEspecialidad.isEmpty()}" class="text-slate-400 text-sm italic my-auto">
+                        No hay citas agendadas hoy.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Doctors -->
+            <div class="wire-box p-6 flex flex-col bg-white">
+                <div class="font-bold text-sm text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-3 mb-4 flex items-center">
+                    <span class="mr-2">👨‍⚕️</span> Top Médicos (Citas)
+                </div>
+                <div class="overflow-hidden rounded-lg border border-slate-100 flex-1">
+                    <table class="w-full text-left m-0">
+                        <thead>
+                            <tr>
+                                <th>Profesional Médico</th>
+                                <th class="text-right">Nro. Citas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="entry : ${topMedicos}">
+                                <td class="font-medium text-slate-700" th:text="${entry.key}">Dr. Pérez</td>
+                                <td class="text-right font-bold text-blue-600" th:text="${entry.value}">0</td>
+                            </tr>
+                            <tr th:if="${topMedicos == null || topMedicos.isEmpty()}">
+                                <td colspan="2" class="text-center text-slate-400 italic">No hay citas hoy</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Section: Próximas Atenciones -->
+        <div class="grid grid-cols-1 gap-6 mb-6">
+            
+            <!-- Next clinic appointments -->
+            <div class="wire-box p-6 bg-white shadow-sm border border-slate-200">
+                <div class="font-bold text-sm text-slate-800 uppercase tracking-wide border-b border-slate-100 pb-3 mb-4 flex items-center">
+                    <span class="mr-2">🏥</span> Próximas Atenciones
+                </div>
+                <div class="overflow-hidden rounded-lg border border-slate-100">
+                    <table class="w-full text-left m-0">
+                        <thead>
+                            <tr>
+                                <th>Consultorio</th>
+                                <th>Hora</th>
+                                <th>Paciente</th>
+                                <th>Médico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="cita : ${proximasAtenciones}">
+                                <td><span class="badge badge-blue" th:text="${cita.consultorio.nombreNumero}">Cons.</span></td>
+                                <td class="font-semibold text-slate-700" th:text="${#temporals.format(cita.fechaHora, 'hh:mm a')}">08:00 AM</td>
+                                <td class="font-medium text-slate-800" th:text="${cita.paciente.nombres + ' ' + cita.paciente.apellidos}">Nombre</td>
+                                <td class="text-slate-500" th:text="${'Dr. ' + cita.medico.apellidos}">Médico</td>
+                            </tr>
+                            <tr th:if="${proximasAtenciones == null || proximasAtenciones.isEmpty()}">
+                                <td colspan="4" class="text-center text-slate-400 italic py-4">No hay atenciones pendientes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+</body>
+</html>

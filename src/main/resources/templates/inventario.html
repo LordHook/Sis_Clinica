@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: base(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section class="p-0 h-full flex flex-col">
+        <div class="flex justify-between items-end mb-6 border-b border-slate-200 pb-4">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">Inventario de Medicamentos</h2>
+                <p class="text-sm text-slate-500 mt-1">Gestión del catálogo y stock de farmacia</p>
+            </div>
+            <button onclick="abrirModalMedicamento()" class="wire-btn-dark px-5 py-2.5 cursor-pointer">
+                + Nuevo Medicamento
+            </button>
+        </div>
+
+        <!-- Alertas de Error -->
+        <div th:if="${param.errorInUse}" class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg relative mb-6 shadow-sm flex items-center" role="alert">
+            <span class="mr-2 text-xl">🛑</span>
+            <span class="block sm:inline font-medium">No se puede eliminar el medicamento porque existen recetas históricas asociadas.</span>
+        </div>
+
+        <!-- Filter Search Bar -->
+        <form th:action="@{/inventario}" method="get" class="wire-box p-4 mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white shadow-sm border-0">
+            <div class="relative col-span-2">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">🔍</span>
+                <input type="text" name="busqueda" placeholder="Buscar medicamento por nombre..." class="w-full border border-slate-300 rounded-lg py-2 pl-9 pr-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+            </div>
+            <div class="flex space-x-2">
+                <button type="submit" class="wire-btn flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-sm border-0 transition cursor-pointer">
+                    Buscar
+                </button>
+                <a th:href="@{/inventario}" class="wire-btn flex-1 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-sm border-0 transition flex items-center justify-center cursor-pointer">
+                    Limpiar
+                </a>
+            </div>
+        </form>
+
+        <!-- Medicamentos Table -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm flex-1 overflow-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
+                    <tr class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
+                        <th class="p-4">ID</th>
+                        <th class="p-4">Nombre del Medicamento</th>
+                        <th class="p-4 text-center">Stock Actual</th>
+                        <th class="p-4 text-center">Precio (S/)</th>
+                        <th class="p-4 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-slate-100">
+                    <tr th:each="m : ${medicamentos}" class="hover:bg-slate-50/50 transition-colors">
+                        <td class="p-4 font-mono text-slate-500 text-xs" th:text="${m.idMedicamento}">1</td>
+                        <td class="p-4 font-semibold text-slate-800" th:text="${m.nombre}">Paracetamol</td>
+                        <td class="p-4 text-center">
+                            <span class="badge" th:classappend="${m.stock > 10 ? 'badge-green' : (m.stock > 0 ? 'badge-amber' : 'badge-red')}"
+                                  th:text="${m.stock + ' unds'}">100 unds</span>
+                        </td>
+                        <td class="p-4 text-center font-mono text-slate-700" th:text="${m.precio}">5.00</td>
+                        <td class="p-4 text-right font-medium text-xs">
+                            <div class="flex justify-end items-center space-x-3">
+                                <button type="button" 
+                                        th:data-id="${m.idMedicamento}"
+                                        th:data-nombre="${m.nombre}"
+                                        th:data-precio="${m.precio}"
+                                        th:data-stock="${m.stock}"
+                                        onclick="editarMedicamento(this)" 
+                                        class="text-blue-600 hover:text-blue-800 border-0 bg-transparent cursor-pointer font-bold">Editar</button>
+                                
+                                <form th:action="@{/inventario/eliminar/{id}(id=${m.idMedicamento})}" method="post" onsubmit="return confirm('¿Está seguro de eliminar este medicamento del catálogo?');" class="inline">
+                                    <button type="submit" class="text-red-500 hover:text-red-700 border-0 bg-transparent cursor-pointer font-bold">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${medicamentos == null || medicamentos.isEmpty()}">
+                        <td colspan="5" class="text-center text-slate-400 italic py-8 bg-white">No se encontraron medicamentos en el catálogo</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add/Edit Modal -->
+        <div id="modal-medicamento" class="hidden-view fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-all">
+            <div class="wire-box w-full max-w-md flex flex-col border-0 shadow-2xl overflow-hidden rounded-2xl bg-white">
+                <form th:action="@{/inventario/guardar}" method="post">
+                    <input type="hidden" name="idMedicamento" id="form-id">
+                    
+                    <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
+                        <h3 class="font-bold text-lg text-slate-800 flex items-center" id="modal-title">
+                            <span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">📦</span> Nuevo Medicamento
+                        </h3>
+                        <button type="button" onclick="cerrarModalMedicamento()" class="text-slate-400 hover:text-slate-700 text-xl leading-none border-0 bg-transparent cursor-pointer">&times;</button>
+                    </div>
+                    
+                    <div class="p-6 space-y-5 bg-slate-50">
+                        <div>
+                            <label class="block font-semibold text-sm mb-1.5 text-slate-700">Nombre del Medicamento <span class="text-red-500">*</span></label>
+                            <input type="text" name="nombre" id="form-nombre" class="wire-input" required />
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-5">
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Stock Inicial / Actual <span class="text-red-500">*</span></label>
+                                <input type="number" name="stock" id="form-stock" class="wire-input font-mono" min="0" value="0" required />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-sm mb-1.5 text-slate-700">Precio (S/) <span class="text-red-500">*</span></label>
+                                <input type="number" step="0.01" name="precio" id="form-precio" class="wire-input font-mono" min="0" value="0.00" required />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 border-t border-slate-100 flex justify-end space-x-3 bg-white">
+                        <button type="button" onclick="cerrarModalMedicamento()" class="wire-btn px-5 py-2.5 cursor-pointer">Cancelar</button>
+                        <button type="submit" class="wire-btn-dark px-6 py-2.5 shadow-md text-[13px] cursor-pointer">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function abrirModalMedicamento() {
+                document.getElementById('form-id').value = '';
+                document.getElementById('form-nombre').value = '';
+                document.getElementById('form-stock').value = '0';
+                document.getElementById('form-precio').value = '0.00';
+                document.getElementById('modal-title').innerHTML = '<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">📦</span> Nuevo Medicamento';
+                document.getElementById('modal-medicamento').classList.remove('hidden-view');
+            }
+
+            function editarMedicamento(btn) {
+                document.getElementById('form-id').value = btn.getAttribute('data-id');
+                document.getElementById('form-nombre').value = btn.getAttribute('data-nombre');
+                document.getElementById('form-stock').value = btn.getAttribute('data-stock');
+                document.getElementById('form-precio').value = btn.getAttribute('data-precio');
+                document.getElementById('modal-title').innerHTML = '<span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg mr-2 text-sm">📦</span> Editar Medicamento';
+                document.getElementById('modal-medicamento').classList.remove('hidden-view');
+            }
+
+            function cerrarModalMedicamento() {
+                document.getElementById('modal-medicamento').classList.add('hidden-view');
+            }
+        </script>
+    </section>
+</body>
+</html>

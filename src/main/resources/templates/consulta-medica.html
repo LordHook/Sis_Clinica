@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html th:replace="~{layout :: base(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <section class="p-0 h-full flex flex-col overflow-auto">
+        <div class="mb-6 border-b border-slate-200 pb-4 flex justify-between items-center">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-800">Consulta Médica</h2>
+                <p class="text-sm text-slate-500 mt-1" th:text="${#temporals.format(cita.fechaHora, 'dd/MM/yyyy — hh:mm a')} + ' · ' + ${cita.especialidad.nombre} + ' · ' + ${cita.consultorio.nombreNumero}">
+                    Fecha · Especialidad · Consultorio
+                </p>
+            </div>
+            <a th:href="@{/citas}" class="wire-btn px-4 py-2 text-sm cursor-pointer">← Volver a Citas</a>
+        </div>
+
+        <!-- ===================== DATOS DEL PACIENTE (SOLO LECTURA) ===================== -->
+        <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 mb-6">
+            <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center">
+                <span class="mr-2">👤</span> Datos del Paciente <span class="ml-2 normal-case font-normal text-slate-400">(solo lectura — para editar, ir al módulo Pacientes)</span>
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+                <div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Nombres y Apellidos</div>
+                    <div class="font-bold text-slate-800" th:text="${paciente.nombres + ' ' + paciente.apellidos}">Nombre Apellido</div>
+                </div>
+                <div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">DNI</div>
+                    <div class="font-semibold text-slate-700" th:text="${paciente.dni}">12345678</div>
+                </div>
+                <div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Historia Clínica</div>
+                    <div class="font-mono font-semibold text-blue-600" th:text="${paciente.numeroHistoriaClinica}">HC-000001</div>
+                </div>
+                <div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Edad / Sexo</div>
+                    <div class="font-semibold text-slate-700" th:text="${(paciente.edad != null ? paciente.edad : '-') + ' años / ' + paciente.sexo}">30 / M</div>
+                </div>
+                <div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Teléfono</div>
+                    <div class="font-semibold text-slate-700" th:text="${paciente.telefono}">987654321</div>
+                </div>
+                <div>
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Correo</div>
+                    <div class="font-semibold text-slate-700" th:text="${paciente.correo != null ? paciente.correo : '—'}">correo@correo.com</div>
+                </div>
+                <div class="col-span-2">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Dirección</div>
+                    <div class="font-semibold text-slate-700" th:text="${paciente.direccion}">Av. Los Alisos 123, Miraflores</div>
+                </div>
+                <div class="col-span-2 md:col-span-4 bg-red-50 border border-red-100 rounded-lg p-3">
+                    <div class="text-[10px] font-bold text-red-500 uppercase">⚠️ Alergias</div>
+                    <div class="font-bold text-red-700" th:text="${(paciente.alergias != null and !paciente.alergias.isEmpty()) ? paciente.alergias.toUpperCase() : 'NINGUNA CONOCIDA'}">NINGUNA CONOCIDA</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===================== CASO A: LA CONSULTA YA FUE REGISTRADA (SOLO LECTURA) ===================== -->
+        <div th:if="${yaAtendida}" class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+            <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center">
+                <span class="mr-2">📋</span> Registro Médico de esta Consulta
+                <span class="badge badge-green ml-3">ATENDIDA</span>
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <div class="text-xs font-bold text-slate-400 uppercase mb-1">Motivo de Consulta</div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm text-slate-700" th:text="${consultaExistente.motivoConsulta}">Motivo...</div>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-400 uppercase mb-1">Diagnóstico</div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm text-slate-700" th:text="${consultaExistente.diagnosticoCie10 != null and !consultaExistente.diagnosticoCie10.isEmpty() ? consultaExistente.diagnosticoCie10 : '—'}">Diagnóstico...</div>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-400 uppercase mb-1">Tratamiento</div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm text-slate-700" th:text="${consultaExistente.tratamiento != null and !consultaExistente.tratamiento.isEmpty() ? consultaExistente.tratamiento : '—'}">Tratamiento...</div>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-400 uppercase mb-1">Indicación Adicional</div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm text-slate-700" th:text="${consultaExistente.evolucion != null and !consultaExistente.evolucion.isEmpty() ? consultaExistente.evolucion : '—'}">Indicación...</div>
+                </div>
+            </div>
+
+            <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">💊 Medicinas Recetadas</h4>
+            <div class="overflow-hidden border border-slate-200 rounded-lg">
+                <table class="w-full text-left text-sm m-0">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="p-3">Medicamento</th>
+                            <th class="p-3">Dosis</th>
+                            <th class="p-3">Frecuencia</th>
+                            <th class="p-3">Cantidad</th>
+                            <th class="p-3 text-right">Estado en Farmacia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="r : ${recetasEmitidas}" class="border-t border-slate-100">
+                            <td class="p-3 font-semibold text-slate-800" th:text="${r.medicamento.nombre}">Paracetamol</td>
+                            <td class="p-3" th:text="${r.dosis}">1 tab</td>
+                            <td class="p-3" th:text="${r.frecuencia}">cada 8h</td>
+                            <td class="p-3 font-bold text-blue-600" th:text="${r.cantidad}">10</td>
+                            <td class="p-3 text-right">
+                                <span class="badge" th:classappend="${r.estado.name() == 'DESPACHADA'} ? 'badge-green' : 'badge-yellow'" th:text="${r.estado.name()}">EMITIDA</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${recetasEmitidas == null || recetasEmitidas.isEmpty()}">
+                            <td colspan="5" class="text-center text-slate-400 italic py-4">No se recetó ninguna medicina en esta consulta</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-slate-400 mt-4 italic">
+                Este registro ya fue enviado a Farmacia y no puede editarse desde aquí. El farmacéutico validará y despachará las medicinas recetadas.
+            </p>
+        </div>
+
+        <!-- ===================== CASO B: REGISTRAR NUEVA CONSULTA (FORMULARIO) ===================== -->
+        <div th:if="${!yaAtendida}" class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+            <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center">
+                <span class="mr-2">🩺</span> Registrar Diagnóstico y Tratamiento
+            </h3>
+
+            <input type="hidden" id="form-id-cita" th:value="${cita.idCita}">
+
+            <div class="grid grid-cols-1 gap-5 mb-6">
+                <div>
+                    <label class="block font-semibold text-sm mb-1.5 text-slate-700">Motivo de la Consulta</label>
+                    <textarea id="form-motivo" rows="2" class="wire-input" placeholder="Ej. Dolor de garganta y fiebre hace 2 días..." required></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block font-semibold text-sm mb-1.5 text-slate-700">Diagnóstico</label>
+                        <textarea id="form-diagnostico" rows="3" class="wire-input" placeholder="Ej. Faringitis aguda de probable origen viral..." required></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-sm mb-1.5 text-slate-700">Tratamiento</label>
+                        <textarea id="form-tratamiento" rows="3" class="wire-input" placeholder="Ej. Reposo relativo, abundantes líquidos, control en 5 días..."></textarea>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold text-sm mb-1.5 text-slate-700">Indicación Adicional</label>
+                    <textarea id="form-indicacion" rows="2" class="wire-input" placeholder="Cualquier observación adicional para el paciente o para farmacia..."></textarea>
+                </div>
+            </div>
+
+            <!-- Medicinas Recetadas (dinámico) -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase">💊 Medicinas Recetadas</h4>
+                    <button type="button" onclick="agregarFilaMedicamento()" class="wire-btn px-3 py-1.5 text-[11px] cursor-pointer">+ Agregar Medicamento</button>
+                </div>
+
+                <div id="lista-medicamentos" class="space-y-3"></div>
+
+                <p id="sin-medicamentos-msg" class="text-xs text-slate-400 italic mt-2">
+                    Aún no has agregado ninguna medicina. Si la consulta no requiere receta, puedes guardar sin agregar ninguna.
+                </p>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button id="btn-guardar-consulta" onclick="guardarConsulta()" class="wire-btn-dark px-6 py-2.5 shadow-md text-[13px] cursor-pointer">
+                    Guardar Consulta y Emitir Receta
+                </button>
+            </div>
+        </div>
+
+        <!-- Fila de medicamento (plantilla, no se muestra directamente) -->
+        <template id="plantilla-fila-medicamento">
+            <div class="fila-medicamento grid grid-cols-12 gap-2 items-end bg-slate-50 border border-slate-200 rounded-lg p-3">
+                <div class="col-span-4">
+                    <label class="block text-[10px] font-semibold text-slate-500 mb-1">Medicamento</label>
+                    <select class="wire-input med-select py-1.5 text-sm">
+                        <option value="">Seleccione...</option>
+                        <option th:each="m : ${medicamentos}" th:value="${m.idMedicamento}" th:text="${m.nombre + ' (Stock: ' + m.stock + ')'}"></option>
+                    </select>
+                </div>
+                <div class="col-span-3">
+                    <label class="block text-[10px] font-semibold text-slate-500 mb-1">Dosis</label>
+                    <input type="text" class="wire-input med-dosis py-1.5 text-sm" placeholder="Ej. 1 tableta">
+                </div>
+                <div class="col-span-3">
+                    <label class="block text-[10px] font-semibold text-slate-500 mb-1">Frecuencia</label>
+                    <input type="text" class="wire-input med-frecuencia py-1.5 text-sm" placeholder="Ej. cada 8 horas">
+                </div>
+                <div class="col-span-1">
+                    <label class="block text-[10px] font-semibold text-slate-500 mb-1">Cant.</label>
+                    <input type="number" min="1" class="wire-input med-cantidad py-1.5 text-sm" placeholder="10">
+                </div>
+                <div class="col-span-1 flex justify-center">
+                    <button type="button" onclick="this.closest('.fila-medicamento').remove(); actualizarMensajeVacio();" class="text-red-500 hover:text-red-700 text-lg leading-none border-0 bg-transparent cursor-pointer">&times;</button>
+                </div>
+            </div>
+        </template>
+
+        <script th:inline="none">
+            function actualizarMensajeVacio() {
+                const contenedor = document.getElementById('lista-medicamentos');
+                const mensaje = document.getElementById('sin-medicamentos-msg');
+                mensaje.style.display = contenedor.children.length === 0 ? 'block' : 'none';
+            }
+
+            function agregarFilaMedicamento() {
+                const plantilla = document.getElementById('plantilla-fila-medicamento');
+                const clon = plantilla.content.cloneNode(true);
+                document.getElementById('lista-medicamentos').appendChild(clon);
+                actualizarMensajeVacio();
+            }
+
+            function guardarConsulta() {
+                const motivo = document.getElementById('form-motivo').value.trim();
+                const diagnostico = document.getElementById('form-diagnostico').value.trim();
+
+                if (!motivo) {
+                    alert('El motivo de la consulta es obligatorio.');
+                    return;
+                }
+                if (!diagnostico) {
+                    alert('El diagnóstico es obligatorio.');
+                    return;
+                }
+
+                // Recolectar medicinas recetadas
+                const recetas = [];
+                let hayFilaIncompleta = false;
+                document.querySelectorAll('.fila-medicamento').forEach(fila => {
+                    const idMedicamento = fila.querySelector('.med-select').value;
+                    const dosis = fila.querySelector('.med-dosis').value.trim();
+                    const frecuencia = fila.querySelector('.med-frecuencia').value.trim();
+                    const cantidad = fila.querySelector('.med-cantidad').value;
+
+                    if (!idMedicamento && !dosis && !frecuencia && !cantidad) {
+                        return; // fila vacía, se ignora
+                    }
+                    if (!idMedicamento || !dosis || !frecuencia || !cantidad || parseInt(cantidad) < 1) {
+                        hayFilaIncompleta = true;
+                        return;
+                    }
+                    recetas.push({
+                        idMedicamento: idMedicamento,
+                        dosis: dosis,
+                        frecuencia: frecuencia,
+                        cantidad: parseInt(cantidad)
+                    });
+                });
+
+                if (hayFilaIncompleta) {
+                    alert('Hay una medicina con datos incompletos. Completa todos los campos (medicamento, dosis, frecuencia y cantidad) o elimina esa fila.');
+                    return;
+                }
+
+                const payload = {
+                    idCita: document.getElementById('form-id-cita').value,
+                    motivoConsulta: motivo,
+                    diagnosticoCie10: diagnostico,
+                    tratamiento: document.getElementById('form-tratamiento').value.trim(),
+                    evolucion: document.getElementById('form-indicacion').value.trim(),
+                    recetas: recetas
+                };
+
+                const boton = document.getElementById('btn-guardar-consulta');
+                boton.disabled = true;
+                boton.innerHTML = '<span class="inline-block animate-spin mr-2">⏳</span> Guardando...';
+
+                fetch('/api/consultas/registrar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Consulta registrada correctamente. La receta fue enviada a Farmacia.');
+                        window.location.reload();
+                    } else {
+                        return response.json().then(err => { throw new Error(err.error || 'Error desconocido'); });
+                    }
+                })
+                .catch(error => {
+                    alert('Error al guardar la consulta: ' + error.message);
+                    boton.disabled = false;
+                    boton.innerHTML = 'Guardar Consulta y Emitir Receta';
+                });
+            }
+
+            actualizarMensajeVacio();
+        </script>
+    </section>
+</body>
+</html>
