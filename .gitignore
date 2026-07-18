@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Gradle ###
+.gradle
+!gradle/wrapper/gradle-wrapper.jar
+
+### Logs and Backups ###
+*.log
+backups/
+

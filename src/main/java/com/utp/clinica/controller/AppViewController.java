@@ -134,40 +134,49 @@ public class AppViewController {
         model.addAttribute("tituloCabecera", "Dashboard");
 
         // Estadísticas Reales
+        List<Cita> todasLasCitas = citaService.listarTodas();
         List<Cita> citasHoy = citaService.obtenerCitasDeHoy();
         model.addAttribute("totalCitasHoy", citasHoy.size());
 
-        // Citas por Especialidad (agrupación en Java)
-        Map<String, Long> especialidadesMap = citasHoy.stream()
-                .collect(Collectors.groupingBy(c -> c.getEspecialidad().getNombre(), Collectors.counting()));
-        model.addAttribute("citasPorEspecialidad", especialidadesMap);
-
-        // Top Médicos (Conteo de citas hoy)
-        Map<String, Long> topMedicosMap = citasHoy.stream()
-                .collect(Collectors.groupingBy(c -> "Dr. " + c.getMedico().getApellidos(), Collectors.counting()));
-        model.addAttribute("topMedicos", topMedicosMap);
-
-        // Próximas Atenciones hoy (PROGRAMADAS o CONFIRMADAS)
-        List<Cita> proximasAtenciones = citasHoy.stream()
-                .filter(c -> c.getEstado() == Cita.EstadoCita.PROGRAMADA || c.getEstado() == Cita.EstadoCita.CONFIRMADA)
-                .sorted(Comparator.comparing(Cita::getFechaHora))
-                .collect(Collectors.toList());
-        model.addAttribute("proximasAtenciones", proximasAtenciones);
-
-        // NUEVAS MÉTRICAS:
-        // 1. Total Pacientes
+        // Total Pacientes
         int totalPacientes = pacienteService.listarTodos().size();
         model.addAttribute("totalPacientes", totalPacientes);
 
-
-
-        // 3. Eficiencia de Citas Atendidas
-        long citasAtendidas = citasHoy.stream()
+        // Eficiencia de Citas Atendidas (Histórico)
+        long citasAtendidas = todasLasCitas.stream()
                 .filter(c -> c.getEstado() == Cita.EstadoCita.ATENDIDA)
                 .count();
-        int eficiencia = citasHoy.isEmpty() ? 0 : (int) Math.round(((double) citasAtendidas / citasHoy.size()) * 100);
+        long citasHistoricas = todasLasCitas.stream()
+                .filter(c -> c.getEstado() == Cita.EstadoCita.ATENDIDA || c.getEstado() == Cita.EstadoCita.AUSENTE || c.getEstado() == Cita.EstadoCita.CANCELADA)
+                .count();
+        int eficiencia = citasHistoricas == 0 ? 0 : (int) Math.round(((double) citasAtendidas / citasHistoricas) * 100);
         model.addAttribute("citasAtendidas", citasAtendidas);
+        model.addAttribute("citasHistoricas", citasHistoricas);
         model.addAttribute("eficienciaCitas", eficiencia);
+
+        // Citas por Especialidad (Global)
+        Map<String, Long> especialidadesMap = todasLasCitas.stream()
+                .collect(Collectors.groupingBy(c -> c.getEspecialidad().getNombre(), Collectors.counting()));
+        model.addAttribute("citasPorEspecialidad", especialidadesMap);
+
+        // Top Médicos (Global)
+        Map<String, Long> topMedicosMap = todasLasCitas.stream()
+                .collect(Collectors.groupingBy(c -> "Dr. " + c.getMedico().getApellidos(), Collectors.counting()));
+        // Ordenar el map por valor descendente
+        Map<String, Long> topMedicosOrdenado = topMedicosMap.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(5)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        model.addAttribute("topMedicos", topMedicosOrdenado);
+
+        // Próximas Atenciones (A futuro)
+        List<Cita> proximasAtenciones = todasLasCitas.stream()
+                .filter(c -> (c.getEstado() == Cita.EstadoCita.PROGRAMADA || c.getEstado() == Cita.EstadoCita.CONFIRMADA)
+                             && !c.getFechaHora().isBefore(LocalDateTime.now()))
+                .sorted(Comparator.comparing(Cita::getFechaHora))
+                .limit(10)
+                .collect(Collectors.toList());
+        model.addAttribute("proximasAtenciones", proximasAtenciones);
 
         return "dashboard";
     }

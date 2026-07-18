@@ -53,7 +53,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="horario : ${horarios}">
+                                    <tr th:each="horario : ${horarios}" class="turno-existente" th:data-dia="${horario.diaSemana}" th:data-inicio="${horario.horaInicio}" th:data-fin="${horario.horaFin}">
                                         <td class="font-semibold text-slate-700" th:text="${horario.diaSemana}">LUNES</td>
                                         <td><span class="bg-slate-100 px-2 py-1 rounded text-xs font-mono" th:text="${horario.horaInicio}">08:00 AM</span></td>
                                         <td><span class="bg-slate-100 px-2 py-1 rounded text-xs font-mono" th:text="${horario.horaFin}">02:00 PM</span></td>
@@ -194,12 +194,32 @@
             }
 
             function validarTurno(form) {
+                const dia = form.querySelector('select[name="diaSemana"]').value;
                 const inicio = form.querySelector('input[name="horaInicio"]').value;
                 const fin = form.querySelector('input[name="horaFin"]').value;
+                
                 if (inicio >= fin) {
                     alert('La hora de término debe ser posterior a la hora de inicio.');
                     return false;
                 }
+
+                const turnosExistentes = document.querySelectorAll('.turno-existente');
+                for (let i = 0; i < turnosExistentes.length; i++) {
+                    const tr = turnosExistentes[i];
+                    const diaExt = tr.getAttribute('data-dia');
+                    // Thymeleaf serialize LocalTime as "HH:mm" or "HH:mm:ss". We extract the first 5 chars "HH:mm".
+                    const inicioExt = tr.getAttribute('data-inicio').substring(0, 5);
+                    const finExt = tr.getAttribute('data-fin').substring(0, 5);
+                    
+                    if (dia === diaExt) {
+                        // Lógica de solapamiento: (inicioNuevo < finViejo) y (finNuevo > inicioViejo)
+                        if (inicio < finExt && fin > inicioExt) {
+                            alert('No se puede agregar el turno. Ya existe un turno asignado para el ' + diaExt + ' de ' + inicioExt + ' a ' + finExt + ' que se cruza con el nuevo horario.');
+                            return false;
+                        }
+                    }
+                }
+                
                 return true;
             }
 
