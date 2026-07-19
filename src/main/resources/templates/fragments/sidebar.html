@@ -41,12 +41,7 @@
                <span class="mr-3 text-lg opacity-70">💊</span> Módulo Farmacia
             </a>
             
-            <!-- Inventario Link (visible si tiene permiso 'inventario') -->
-            <a th:if="${permisosUsuario != null && permisosUsuario.contains('inventario')}"
-               th:href="@{/inventario}" class="nav-btn w-full flex items-center px-3 py-2.5 transition-colors" 
-               th:classappend="${paginaActiva == 'inventario'} ? 'nav-active' : 'nav-inactive'">
-               <span class="mr-3 text-lg opacity-70">📦</span> Inventario
-            </a>
+
             <!-- Administración (visible si tiene permiso 'usuarios' o 'horarios') -->
             <div th:if="${permisosUsuario != null && (permisosUsuario.contains('usuarios') || permisosUsuario.contains('horarios'))}">
                 <div class="text-[10px] font-bold text-slate-400 mb-2 mt-6 uppercase tracking-wider px-3">Administración</div>

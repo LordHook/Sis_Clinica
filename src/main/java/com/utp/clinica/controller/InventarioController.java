@@ -29,16 +29,16 @@ public class InventarioController {
         medicamento.setStock(stock);
         
         farmaciaService.guardarMedicamento(medicamento);
-        return "redirect:/inventario";
+        return "redirect:/farmacia?openInventario=true";
     }
 
     @PostMapping("/eliminar/{id}")
     public String eliminar(@PathVariable("id") Integer id) {
         try {
             farmaciaService.eliminarMedicamento(id);
-            return "redirect:/inventario";
+            return "redirect:/farmacia?openInventario=true";
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            return "redirect:/inventario?errorInUse=true";
+            return "redirect:/farmacia?openInventario=true&errorInUse=true";
         }
     }
 }

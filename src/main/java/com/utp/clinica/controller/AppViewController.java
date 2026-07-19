@@ -310,27 +310,9 @@ public class AppViewController {
         model.addAttribute("recetas", recetasEmitidas);
         model.addAttribute("recetasDespachadas", recetasDespachadas);
         model.addAttribute("despachosPorDia", despachosPorDia);
+        model.addAttribute("medicamentos", farmaciaService.listarMedicamentos());
 
         return "farmacia";
-    }
-
-    @GetMapping("/inventario")
-    public String inventario(@RequestParam(value = "busqueda", required = false) String busqueda,
-                             Model model) {
-        cargarDatosUsuarioEnModelo(model);
-        model.addAttribute("paginaActiva", "inventario");
-        model.addAttribute("tituloCabecera", "Inventario de Farmacia");
-
-        List<Medicamento> medicamentos = farmaciaService.listarMedicamentos();
-        if (busqueda != null && !busqueda.isEmpty()) {
-            String q = busqueda.toLowerCase();
-            medicamentos = medicamentos.stream()
-                .filter(m -> m.getNombre().toLowerCase().contains(q))
-                .collect(Collectors.toList());
-        }
-
-        model.addAttribute("medicamentos", medicamentos);
-        return "inventario";
     }
     @GetMapping("/usuarios")
     public String usuarios(@RequestParam(value = "busqueda", required = false) String busqueda,
