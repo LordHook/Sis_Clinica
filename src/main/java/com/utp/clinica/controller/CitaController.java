@@ -43,11 +43,20 @@ public class CitaController {
         List<Usuario> medicos = usuarioRepo.findByRolAndEspecialidad_IdEspecialidad(Usuario.Rol.MEDICO, idEspecialidad);
         List<Map<String, Object>> resultado = medicos.stream()
                 .filter(m -> m.getEstado()) // Solo médicos activos
-                .map(m -> Map.<String, Object>of(
-                        "idUsuario", m.getIdUsuario(),
-                        "nombres", m.getNombres(),
-                        "apellidos", m.getApellidos()
-                ))
+                .map(m -> {
+                    Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("idUsuario", m.getIdUsuario());
+                    map.put("nombres", m.getNombres());
+                    map.put("apellidos", m.getApellidos());
+                    if (m.getConsultorio() != null) {
+                        map.put("idConsultorio", m.getConsultorio().getIdConsultorio());
+                        map.put("nombreConsultorio", m.getConsultorio().getNombreNumero());
+                    } else {
+                        map.put("idConsultorio", null);
+                        map.put("nombreConsultorio", "No asignado");
+                    }
+                    return map;
+                })
                 .collect(Collectors.toList());
         return ResponseEntity.ok(resultado);
     }

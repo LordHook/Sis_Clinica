@@ -183,6 +183,9 @@ public class AppViewController {
 
     @GetMapping("/citas")
     public String citas(@RequestParam(value = "busqueda", required = false) String busqueda,
+                        @RequestParam(value = "estado", required = false) Cita.EstadoCita estado,
+                        @RequestParam(value = "page", defaultValue = "0") int page,
+                        @RequestParam(value = "size", defaultValue = "20") int size,
                         Model model) {
         cargarDatosUsuarioEnModelo(model);
         model.addAttribute("paginaActiva", "citas");
@@ -191,29 +194,26 @@ public class AppViewController {
         // Determinar el usuario autenticado para saber si es un médico
         Usuario usuarioActual = obtenerUsuarioAutenticado();
         boolean esMedico = usuarioActual != null && usuarioActual.getRol() == Usuario.Rol.MEDICO;
-
-        // Datos para las tablas.
-        // Un MÉDICO solo ve SUS propias citas (atendidas anteriores, de hoy y agendadas a futuro).
-        // Recepción/Administración ven todas las citas de la clínica.
-        List<Cita> todasLasCitas = esMedico
-                ? citaService.listarPorMedico(usuarioActual)
-                : citaService.listarTodas();
-        if (busqueda != null && !busqueda.trim().isEmpty()) {
-            String b = busqueda.toLowerCase();
-            todasLasCitas = todasLasCitas.stream()
-                    .filter(c -> c.getPaciente().getNombres().toLowerCase().contains(b)
-                            || c.getPaciente().getApellidos().toLowerCase().contains(b)
-                            || c.getPaciente().getDni().contains(b))
-                    .collect(Collectors.toList());
+        
+        if (usuarioActual != null && usuarioActual.getRol() == Usuario.Rol.MEDICO) {
+            model.addAttribute("citas", citaService.listarPorMedico(usuarioActual));
+            model.addAttribute("esVistaMedico", true);
+        } else {
+            // Sort by state (PROGRAMADA=0 is first) and then by fechaHora DESC
+            org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "estado")
+                    .and(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "fechaHora"));
+            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+            
+            org.springframework.data.domain.Page<Cita> citasPage = citaService.buscarCitasPaginado(busqueda, estado, pageable);
+            model.addAttribute("citasPage", citasPage);
+            model.addAttribute("citas", citasPage.getContent());
+            model.addAttribute("esVistaMedico", false);
+            model.addAttribute("estadoSeleccionado", estado);
         }
-        model.addAttribute("citas", todasLasCitas);
-        model.addAttribute("esVistaMedico", esMedico);
 
-        // Combos del Modal de Registro
         model.addAttribute("pacientes", pacienteService.listarTodos());
         model.addAttribute("especialidades", especialidadRepo.findAll());
         model.addAttribute("consultorios", consultorioRepo.findAll());
-
         return "citas";
     }
 

@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.utp.clinica.model.Consultorio;
+import com.utp.clinica.repository.ConsultorioRepository;
 
 /**
  * Servicio encargado de gestionar la lógica de negocio para la administración de personal y usuarios
@@ -27,6 +29,9 @@ public class UsuarioService {
 
     @Autowired
     private PermisoUsuarioRepository permisoRepo;
+
+    @Autowired
+    private ConsultorioRepository consultorioRepo;
 
     /**
      * Lista todos los usuarios registrados
@@ -85,6 +90,42 @@ public class UsuarioService {
                 }
             }
         }
+        
+        // Asignación de Consultorio secuencial por piso si es MEDICO y no tiene consultorio
+        if (usuario.getRol() == Usuario.Rol.MEDICO && usuario.getConsultorio() == null && usuario.getEspecialidad() != null) {
+            String especialidadNombre = usuario.getEspecialidad().getNombre();
+            String piso = "1"; // Por defecto
+            
+            if (especialidadNombre.contains("General")) piso = "1";
+            else if (especialidadNombre.contains("Pediatr")) piso = "2";
+            else if (especialidadNombre.contains("Cardiolog")) piso = "3";
+            else if (especialidadNombre.contains("Dermatolog")) piso = "4";
+            else piso = "1";
+
+            List<Consultorio> consultoriosPiso = consultorioRepo.findByPiso(piso);
+            int maxNum = 0;
+            for (Consultorio c : consultoriosPiso) {
+                try {
+                    int num = Integer.parseInt(c.getNombreNumero().replace("Cons. ", "").trim());
+                    if (num > maxNum) maxNum = num;
+                } catch (Exception e) {}
+            }
+            
+            if (maxNum == 0) {
+                maxNum = Integer.parseInt(piso) * 100; // Si no hay ninguno, empieza ej. 100 -> el primero será 101
+            }
+            
+            int nextNum = maxNum + 1;
+            String nuevoNombre = "Cons. " + nextNum;
+            
+            Consultorio nuevoConsultorio = new Consultorio();
+            nuevoConsultorio.setNombreNumero(nuevoNombre);
+            nuevoConsultorio.setPiso(piso);
+            nuevoConsultorio = consultorioRepo.save(nuevoConsultorio);
+            
+            usuario.setConsultorio(nuevoConsultorio);
+        }
+        
         return usuarioRepo.save(usuario);
     }
 

@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +37,12 @@ public class CitaService {
      */
     public List<Cita> listarPorPaciente(Paciente paciente) {
         return citaRepo.findByPaciente(paciente);
+    }
+
+
+    public Page<Cita> buscarCitasPaginado(String busqueda, Cita.EstadoCita estado, Pageable pageable) {
+        String query = (busqueda != null && !busqueda.trim().isEmpty()) ? busqueda.trim() : null;
+        return citaRepo.buscarCitasFiltros(query, estado, pageable);
     }
 
     /**

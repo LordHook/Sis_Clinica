@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ConsultorioRepository extends JpaRepository<Consultorio, Integer> {
+    java.util.List<Consultorio> findByPiso(String piso);
+    java.util.Optional<Consultorio> findByNombreNumero(String nombreNumero);
 }

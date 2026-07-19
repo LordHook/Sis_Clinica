@@ -44,6 +44,11 @@ public class Usuario {
     @JoinColumn(name = "id_especialidad")
     private Especialidad especialidad; // Opcional, solo aplicable para rol MEDICO
 
+    @ManyToOne
+    @JoinColumn(name = "id_consultorio")
+    private Consultorio consultorio; // Opcional, asignado automáticamente a los médicos
+
+
     @PrePersist
     protected void onCreate() {
         this.fechaCreacion = LocalDateTime.now();
@@ -89,4 +94,7 @@ public class Usuario {
 
     public Especialidad getEspecialidad() { return especialidad; }
     public void setEspecialidad(Especialidad especialidad) { this.especialidad = especialidad; }
+
+    public Consultorio getConsultorio() { return consultorio; }
+    public void setConsultorio(Consultorio consultorio) { this.consultorio = consultorio; }
 }

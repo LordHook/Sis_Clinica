@@ -49,6 +49,63 @@ public class DatabaseInitializer implements CommandLineRunner {
             System.err.println("[DB MIGRATION ERROR] Error al encriptar contraseñas: " + e.getMessage());
         }
 
+        // 0.5 Asignar consultorios únicos a médicos existentes
+        try {
+            List<Usuario> medicos = usuarioRepo.findByRol(Usuario.Rol.MEDICO);
+            // Identificar los que comparten el mismo consultorio o no tienen
+            java.util.Set<Integer> consultoriosUsados = new java.util.HashSet<>();
+            for (Usuario med : medicos) {
+                if (med.getEspecialidad() == null) continue;
+                
+                boolean necesitaNuevo = false;
+                if (med.getConsultorio() == null) {
+                    necesitaNuevo = true;
+                } else {
+                    if (consultoriosUsados.contains(med.getConsultorio().getIdConsultorio())) {
+                        necesitaNuevo = true; // Ya está usado por otro
+                    } else {
+                        consultoriosUsados.add(med.getConsultorio().getIdConsultorio());
+                    }
+                }
+
+                if (necesitaNuevo) {
+                    String especialidadNombre = med.getEspecialidad().getNombre();
+                    String piso = "1";
+                    
+                    if (especialidadNombre.contains("General")) piso = "1";
+                    else if (especialidadNombre.contains("Pediatr")) piso = "2";
+                    else if (especialidadNombre.contains("Cardiolog")) piso = "3";
+                    else if (especialidadNombre.contains("Dermatolog")) piso = "4";
+                    
+                    List<Consultorio> consultoriosPiso = consultorioRepo.findByPiso(piso);
+                    int maxNum = 0;
+                    for (Consultorio c : consultoriosPiso) {
+                        try {
+                            int num = Integer.parseInt(c.getNombreNumero().replace("Cons. ", "").trim());
+                            if (num > maxNum) maxNum = num;
+                        } catch (Exception e) {}
+                    }
+                    
+                    if (maxNum == 0) maxNum = Integer.parseInt(piso) * 100;
+                    
+                    int nextNum = maxNum + 1;
+                    String nuevoNombre = "Cons. " + nextNum;
+                    
+                    Consultorio nuevoConsultorio = new Consultorio();
+                    nuevoConsultorio.setNombreNumero(nuevoNombre);
+                    nuevoConsultorio.setPiso(piso);
+                    nuevoConsultorio = consultorioRepo.save(nuevoConsultorio);
+                    
+                    med.setConsultorio(nuevoConsultorio);
+                    usuarioRepo.save(med);
+                    consultoriosUsados.add(nuevoConsultorio.getIdConsultorio());
+                    System.out.println("[DB MIGRATION] Consultorio " + nuevoNombre + " asignado al Dr. " + med.getApellidos());
+                }
+            }
+        } catch (Exception e) {
+             System.err.println("[DB MIGRATION ERROR] Error al migrar consultorios: " + e.getMessage());
+        }
+
         // 1. Sembrar Especialidades
         if (especialidadRepo.count() == 0) {
             Especialidad medGen = new Especialidad(); medGen.setNombre("Medicina General");
@@ -117,6 +174,12 @@ public class DatabaseInitializer implements CommandLineRunner {
             medico.setRol(Usuario.Rol.MEDICO);
             medico.setEstado(true);
             medico.setEspecialidad(general);
+            
+            // Asignar el primer consultorio creado a este médico de prueba
+            List<Consultorio> consultorios = consultorioRepo.findAll();
+            if (!consultorios.isEmpty()) {
+                medico.setConsultorio(consultorios.get(0));
+            }
 
             // Farmacéutico
             Usuario farma = new Usuario();
