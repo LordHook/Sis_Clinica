@@ -160,8 +160,6 @@
                             <thead>
                                 <tr class="text-[10px] uppercase font-bold text-slate-500">
                                     <th>Medicamento</th>
-                                    <th>Dosis</th>
-                                    <th>Frecuencia</th>
                                     <th class="w-24 text-center">Cant.</th>
                                     <th class="w-16 text-center">Acción</th>
                                 </tr>
@@ -171,12 +169,10 @@
                                 <tr class="fila-receta">
                                     <td class="p-2">
                                         <select class="wire-input py-1.5 sel-med">
-                                            <option th:each="m : ${medicamentos}" th:value="${m.idMedicamento}" th:text="${m.nombre + ' (Stock: ' + m.stock + ')'}"></option>
+                                            <option th:each="m : ${medicamentos}" th:value="${m.idMedicamento}" th:text="${m.nombre}"></option>
                                         </select>
                                     </td>
-                                    <td class="p-2"><input type="text" class="wire-input py-1.5 inp-dosis" placeholder="Ej: 1 tableta" /></td>
-                                    <td class="p-2"><input type="text" class="wire-input py-1.5 inp-frecuencia" placeholder="Ej: Cada 8 horas x 3 días" /></td>
-                                    <td class="p-2"><input type="number" min="1" class="wire-input py-1.5 text-center inp-cantidad" value="9" /></td>
+                                    <td class="p-2"><input type="number" min="1" class="wire-input py-1.5 text-center inp-cantidad" value="1" /></td>
                                     <td class="p-2 text-center">
                                         <button type="button" onclick="eliminarFila(this)" class="text-red-500 hover:text-red-700 bg-transparent border-0 font-bold text-lg cursor-pointer">&times;</button>
                                     </td>
@@ -213,7 +209,7 @@
                 
                 let selectOptions = '';
                 medicamentos.forEach(m => {
-                    selectOptions += `<option value="${m.idMedicamento}">${m.nombre} (Stock: ${m.stock})</option>`;
+                    selectOptions += `<option value="${m.idMedicamento}">${m.nombre}</option>`;
                 });
 
                 tr.innerHTML = `
@@ -222,8 +218,6 @@
                             ${selectOptions}
                         </select>
                     </td>
-                    <td class="p-2"><input type="text" class="wire-input py-1.5 inp-dosis" placeholder="Ej: 1 tableta" /></td>
-                    <td class="p-2"><input type="text" class="wire-input py-1.5 inp-frecuencia" placeholder="Ej: Cada 8 horas" /></td>
                     <td class="p-2"><input type="number" min="1" class="wire-input py-1.5 text-center inp-cantidad" value="1" /></td>
                     <td class="p-2 text-center">
                         <button type="button" onclick="eliminarFila(this)" class="text-red-500 hover:text-red-700 bg-transparent border-0 font-bold text-lg cursor-pointer">&times;</button>
@@ -257,15 +251,13 @@
                 const recetas = [];
                 document.querySelectorAll('.fila-receta').forEach(row => {
                     const idMed = row.querySelector('.sel-med').value;
-                    const dosis = row.querySelector('.inp-dosis').value;
-                    const frecuencia = row.querySelector('.inp-frecuencia').value;
                     const cantidad = row.querySelector('.inp-cantidad').value;
 
                     if (idMed && cantidad > 0) {
                         recetas.push({
                             idMedicamento: idMed,
-                            dosis: dosis || "Segun indicaciones",
-                            frecuencia: frecuencia || "Segun indicaciones",
+                            dosis: "Según prescripción médica",
+                            frecuencia: "Según prescripción médica",
                             cantidad: cantidad
                         });
                     }
